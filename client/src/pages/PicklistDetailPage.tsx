@@ -165,7 +165,8 @@ export const PicklistDetailPage: React.FC = () => {
               sortedShelves.map((shelf) => (
                 <Card
                   key={shelf.id}
-                  className="border border-gray-200 rounded-lg shadow-sm"
+                  className="border border-gray-200 rounded-lg shadow-sm cursor-pointer hover:shadow-md transition-shadow duration-200"
+                  onClick={() => setLocation(`/tote-scanner/${picklistId}/${shelf.shelfCode}`)}
                 >
                   <CardContent className="p-4">
                     <h3 className="text-lg font-semibold text-gray-900 mb-3">

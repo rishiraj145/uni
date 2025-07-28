@@ -8,6 +8,7 @@ import NotFound from "@/pages/not-found";
 import { PickingLandingPage } from "@/pages/PickingLandingPage";
 import { B2BPackingPage } from "@/pages/B2BPackingPage";
 import { PicklistDetailPage } from "@/pages/PicklistDetailPage";
+import { ToteScannerPage } from "@/pages/ToteScannerPage";
 
 function Router() {
   return (
@@ -16,6 +17,7 @@ function Router() {
       <Route path="/" component={PickingLandingPage} />
       <Route path="/b2b-packing" component={B2BPackingPage} />
       <Route path="/picklist/:id" component={PicklistDetailPage} />
+      <Route path="/tote-scanner/:id/:shelf" component={ToteScannerPage} />
       {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>
