@@ -3,10 +3,12 @@ import React, { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { SideNavigation } from "@/components/SideNavigation";
+import { useLocation } from "wouter";
 
 export const PickingLandingPage = (): JSX.Element => {
   // State for sidebar navigation
   const [isSideNavOpen, setIsSideNavOpen] = useState(false);
+  const [, setLocation] = useLocation();
 
   const handleMenuClick = () => {
     setIsSideNavOpen(true);
@@ -16,20 +18,26 @@ export const PickingLandingPage = (): JSX.Element => {
     setIsSideNavOpen(false);
   };
 
+  const handleB2BPackingClick = () => {
+    setLocation("/b2b-packing");
+  };
+
   // Define the picking options data for mapping
   const pickingOptions = [
     {
-      title: "B2B PICKING",
+      title: "B2B PACKING",
       isDisabled: false,
       comingSoon: false,
       className:
-        "bg-white-100 border border-solid border-[#e0e0e0] shadow-[0px_4px_4px_#0000001a]",
+        "bg-white-100 border border-solid border-[#e0e0e0] shadow-[0px_4px_4px_#0000001a] cursor-pointer hover:bg-gray-50 transition-colors duration-200",
+      onClick: handleB2BPackingClick,
     },
     {
       title: "B2C PICKING",
       isDisabled: true,
       comingSoon: true,
-      className: "bg-greyseeeeee",
+      className: "bg-greyseeeeee cursor-not-allowed",
+      onClick: () => {},
     },
   ];
 
@@ -62,6 +70,7 @@ export const PickingLandingPage = (): JSX.Element => {
               <Card
                 key={index}
                 className={`flex flex-col h-[120px] items-center justify-center gap-4 px-0 py-4 relative self-stretch w-full rounded-lg ${option.className}`}
+                onClick={option.onClick}
               >
                 <CardContent className="p-0 flex flex-col items-center justify-center gap-4">
                   <div
