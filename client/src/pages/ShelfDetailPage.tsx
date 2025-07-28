@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { ArrowLeft, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocation, useParams } from "wouter";
@@ -27,13 +27,64 @@ export const ShelfDetailPage: React.FC = () => {
   const picklistId = params.id || "PK1000";
   const [, setLocation] = useLocation();
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
+  const [cameraError, setCameraError] = useState<string>("");
+  const [showBarcodeData, setShowBarcodeData] = useState(false);
+
+  // Start camera when component mounts
+  useEffect(() => {
+    startCamera();
+    return () => {
+      stopCamera();
+    };
+  }, []);
+
+  const startCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: "environment", // Use back camera for barcode scanning
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
+        }
+      });
+      
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        setCameraStream(stream);
+        setCameraError("");
+      }
+    } catch (error) {
+      console.error("Error accessing camera:", error);
+      setCameraError("Camera access denied. Please allow camera permissions and refresh.");
+    }
+  };
+
+  const stopCamera = () => {
+    if (cameraStream) {
+      cameraStream.getTracks().forEach(track => track.stop());
+      setCameraStream(null);
+    }
+  };
 
   const handleBack = () => {
+    stopCamera();
     setLocation(`/tote-scanner/${picklistId}`);
   };
 
   const handleClose = () => {
+    stopCamera();
     setLocation(`/picklist/${picklistId}`);
+  };
+
+  const handleScanShelf = () => {
+    console.log("Shelf scan clicked - showing barcode data");
+    setShowBarcodeData(true);
+    // Simulate shelf scan success
+    setTimeout(() => {
+      setShowBarcodeData(true);
+    }, 500);
   };
 
   const toggleSort = () => {
@@ -75,52 +126,104 @@ export const ShelfDetailPage: React.FC = () => {
         </header>
 
         {/* Scan SHELF Section */}
-        <div className="bg-gray-800 p-4 relative">
-          <div className="flex items-center justify-between mb-4">
+        <div className="bg-gray-800 flex flex-col items-center justify-center relative h-64">
+          {/* Scan SHELF Title */}
+          <div className="absolute top-6 left-0 right-0 flex items-center justify-center">
             <h2 className="text-white text-lg font-medium">Scan SHELF</h2>
             <button 
-              className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center hover:bg-gray-500 transition-colors"
+              className="absolute right-6 w-10 h-10 bg-white rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors"
+              onClick={handleScanShelf}
             >
-              <Trash2 className="h-5 w-5 text-white" />
+              <Trash2 className="h-4 w-4 text-gray-600" />
             </button>
           </div>
 
-          {/* Barcode Display */}
-          <div className="bg-white rounded-lg p-4 mx-2">
-            <div className="flex justify-center mb-2">
-              {/* Barcode lines */}
-              <div className="flex items-end gap-px">
-                {Array.from({length: 40}, (_, i) => (
-                  <div 
-                    key={i}
-                    className="bg-black"
-                    style={{
-                      width: Math.random() > 0.5 ? '2px' : '1px',
-                      height: `${20 + Math.random() * 20}px`
-                    }}
-                  />
-                ))}
+          {/* Camera Viewfinder */}
+          <div className="relative flex items-center justify-center">
+            {/* Camera Video Stream */}
+            <div className="relative w-64 h-32 rounded-2xl overflow-hidden">
+              <video
+                ref={videoRef}
+                autoPlay
+                playsInline
+                muted
+                className="w-full h-full object-cover"
+              />
+              
+              {/* Scanning Frame Overlay */}
+              <div className="absolute inset-0 border-2 border-white border-opacity-60 rounded-2xl">
+                {/* Corner brackets */}
+                <div className="absolute top-1 left-1 w-6 h-6 border-t-2 border-l-2 border-white rounded-tl-lg"></div>
+                <div className="absolute top-1 right-1 w-6 h-6 border-t-2 border-r-2 border-white rounded-tr-lg"></div>
+                <div className="absolute bottom-1 left-1 w-6 h-6 border-b-2 border-l-2 border-white rounded-bl-lg"></div>
+                <div className="absolute bottom-1 right-1 w-6 h-6 border-b-2 border-r-2 border-white rounded-br-lg"></div>
+                
+                {/* Scanning line animation */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-4/5 h-0.5 bg-red-500 animate-pulse shadow-lg"></div>
+                </div>
+                
+                {/* Center instruction */}
+                {!cameraError && !showBarcodeData && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-white text-xs text-center bg-black bg-opacity-70 px-3 py-1 rounded-full backdrop-blur-sm">
+                      Position shelf barcode here
+                    </div>
+                  </div>
+                )}
               </div>
-            </div>
-            
-            {/* Location Info */}
-            <div className="flex justify-between items-center text-center">
-              <div className="flex-1">
-                <div className="text-black text-2xl font-bold">{mockShelfData.aisle}</div>
-                <div className="text-gray-600 text-sm">AISLE</div>
-                <div className="text-xl">↓</div>
-              </div>
-              <div className="flex-1">
-                <div className="text-black text-2xl font-bold">{mockShelfData.section}</div>
-                <div className="text-gray-600 text-sm">SECTION</div>
-              </div>
-              <div className="flex-1">
-                <div className="text-black text-2xl font-bold">{mockShelfData.level}</div>
-                <div className="text-gray-600 text-sm">LEVEL</div>
-                <div className="text-xl">↓</div>
-              </div>
+              
+              {/* Camera Error Fallback */}
+              {cameraError && (
+                <div className="absolute inset-0 bg-gray-800 flex items-center justify-center rounded-2xl">
+                  <div className="text-white text-xs text-center px-3">
+                    {cameraError}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
+
+          {/* Barcode Data Display (shows after scanning) */}
+          {showBarcodeData && (
+            <div className="absolute bottom-4 left-4 right-4">
+              <div className="bg-white rounded-lg p-3">
+                <div className="flex justify-center mb-2">
+                  {/* Barcode lines */}
+                  <div className="flex items-end gap-px">
+                    {Array.from({length: 30}, (_, i) => (
+                      <div 
+                        key={i}
+                        className="bg-black"
+                        style={{
+                          width: Math.random() > 0.5 ? '2px' : '1px',
+                          height: `${15 + Math.random() * 15}px`
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+                
+                {/* Location Info */}
+                <div className="flex justify-between items-center text-center">
+                  <div className="flex-1">
+                    <div className="text-black text-xl font-bold">{mockShelfData.aisle}</div>
+                    <div className="text-gray-600 text-xs">AISLE</div>
+                    <div className="text-sm">↓</div>
+                  </div>
+                  <div className="flex-1">
+                    <div className="text-black text-xl font-bold">{mockShelfData.section}</div>
+                    <div className="text-gray-600 text-xs">SECTION</div>
+                  </div>
+                  <div className="flex-1">
+                    <div className="text-black text-xl font-bold">{mockShelfData.level}</div>
+                    <div className="text-gray-600 text-xs">LEVEL</div>
+                    <div className="text-sm">↓</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Tabs Section */}
@@ -168,6 +271,18 @@ export const ShelfDetailPage: React.FC = () => {
             </div>
           ))}
         </div>
+
+        {/* Test Button - Remove in production */}
+        {!showBarcodeData && (
+          <div className="fixed bottom-4 right-4">
+            <button
+              onClick={handleScanShelf}
+              className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-blue-700 transition-colors text-sm"
+            >
+              Test Shelf Scan
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
