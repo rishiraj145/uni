@@ -52,6 +52,10 @@ This is a mobile-first picking application migrated from Figma to Replit. The ap
 - **2025-01-28**: Created proper two-page flow: ToteScannerPage (camera) → ShelfDetailPage (shelf data)
 - **2025-01-28**: Added navigation from scanning to shelf detail page with mock barcode data
 - **2025-01-28**: Implemented shelf detail page matching Figma design with barcode display and shelf list
+- **2025-01-28**: Created comprehensive SKU scanner page with barcode scanning interface
+- **2025-01-28**: Added mobile-friendly warehouse scanning UI with Pending/Scanned tabs
+- **2025-01-28**: Implemented realistic product cards with Nike shoe mockups in different colors
+- **2025-01-28**: Added navigation flow from shelf detail to SKU scanner for seamless picking workflow
 
 ## User Preferences
 - Mobile-first design approach

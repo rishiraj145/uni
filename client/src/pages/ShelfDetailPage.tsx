@@ -87,6 +87,12 @@ export const ShelfDetailPage: React.FC = () => {
     }, 500);
   };
 
+  // Navigation to SKU scanner
+  const handleShelfClick = (shelfCode: string) => {
+    stopCamera();
+    setLocation(`/sku-scanner/TOTE_01`);
+  };
+
   const toggleSort = () => {
     setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
   };
@@ -253,7 +259,11 @@ export const ShelfDetailPage: React.FC = () => {
         {/* Shelf List */}
         <div className="flex-1 overflow-y-auto">
           {sortedShelves.map((shelf, index) => (
-            <div key={shelf.code} className="bg-white border-b border-gray-200 p-4">
+            <button 
+              key={shelf.code} 
+              className="w-full bg-white border-b border-gray-200 p-4 hover:bg-gray-50 transition-colors text-left"
+              onClick={() => handleShelfClick(shelf.code)}
+            >
               <div className="flex justify-between items-center">
                 <div>
                   <div className="text-lg font-semibold text-gray-900 mb-1">
@@ -268,7 +278,7 @@ export const ShelfDetailPage: React.FC = () => {
                   <div className="text-lg font-bold text-gray-900">{shelf.pendingQty}</div>
                 </div>
               </div>
-            </div>
+            </button>
           ))}
         </div>
 
