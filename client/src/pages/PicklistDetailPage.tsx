@@ -69,7 +69,7 @@ export const PicklistDetailPage: React.FC = () => {
 
   const handleStartPicking = () => {
     console.log("Start picking clicked");
-    setLocation(`/tote-scanner/${picklistId}/start`);
+    setLocation(`/tote-scanner/${picklistId}`);
   };
 
   const handleMoreOptions = () => {
