@@ -67,7 +67,7 @@ export const B2BPackingPage: React.FC = () => {
 
             <div className="flex items-center gap-8 relative flex-1 grow">
               <h1 className="relative w-fit mt-[-1.00px] font-PAGE-TITLE font-[number:var(--PAGE-TITLE-font-weight)] text-text-elementsprimary text-[length:var(--PAGE-TITLE-font-size)] tracking-[var(--PAGE-TITLE-letter-spacing)] leading-[var(--PAGE-TITLE-line-height)] whitespace-nowrap [font-style:var(--PAGE-TITLE-font-style)]">
-                B2B PACKING
+                PICKLISTS
               </h1>
             </div>
 
@@ -126,18 +126,24 @@ export const B2BPackingPage: React.FC = () => {
             {picklistItems.map((item) => (
               <Card key={item.id} className="border border-greysbordere-0e-0e-0">
                 <CardContent className="p-4">
-                  <div className="flex items-start justify-between">
-                    {/* Left Side - Picklist Code and Pending Info */}
-                    <div className="flex-1 min-w-0">
-                      {/* Picklist Code Title */}
-                      <h3 className="font-medium text-text-elementsprimary font-['Roboto',Helvetica] mb-2 text-left">
+                  {/* Main Container with Two Vertical Divs */}
+                  <div className="flex flex-col gap-3">
+                    {/* First Main Div - Title Section */}
+                    <div className="flex justify-between items-center">
+                      <h3 className="font-medium text-text-elementsprimary font-['Roboto',Helvetica] text-left">
                         {item.picklistCode}
                       </h3>
-                      
-                      {/* Vertical Flex for Pending Information */}
+                      <div className="text-xs text-text-elementssecondary">
+                        Content Button
+                      </div>
+                    </div>
+                    
+                    {/* Second Main Div - 2x2 Matrix Content */}
+                    <div className="grid grid-cols-2 gap-4">
+                      {/* Bottom Left - Pending Information */}
                       <div className="flex flex-col gap-1">
                         <div className="text-sm opacity-80">
-                          <span className="text-text-elementssecondary">Pending Quantity: </span>
+                          <span className="text-text-elementssecondary">Pending Qty: </span>
                           <span className="text-text-elementsprimary font-medium">{item.pendingQuantity}</span>
                         </div>
                         <div className="text-sm opacity-80">
@@ -145,15 +151,15 @@ export const B2BPackingPage: React.FC = () => {
                           <span className="text-text-elementsprimary font-medium">{item.pendingSection}</span>
                         </div>
                       </div>
-                    </div>
 
-                    {/* Right Side - Channel and Customer in Vertical Flex */}
-                    <div className="flex flex-col items-end text-right ml-4 gap-1">
-                      <div className="text-sm text-text-elementsprimary font-medium">
-                        {item.channel}
-                      </div>
-                      <div className="text-sm text-text-elementsprimary font-medium">
-                        {item.customer}
+                      {/* Bottom Right - Channel and Customer */}
+                      <div className="flex flex-col gap-1 text-right">
+                        <div className="text-sm text-text-elementsprimary font-medium">
+                          {item.channel}
+                        </div>
+                        <div className="text-sm text-text-elementsprimary font-medium">
+                          {item.customer}
+                        </div>
                       </div>
                     </div>
                   </div>

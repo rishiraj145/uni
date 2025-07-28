@@ -22,7 +22,6 @@ export const PickingLandingPage = (): JSX.Element => {
     setLocation("/b2b-packing");
   };
 
-  // Define the picking options data for mapping
   const pickingOptions = [
     {
       title: "B2B PACKING",
@@ -33,7 +32,7 @@ export const PickingLandingPage = (): JSX.Element => {
       onClick: handleB2BPackingClick,
     },
     {
-      title: "B2C PICKING",
+      title: "PICKLISTS",
       isDisabled: true,
       comingSoon: true,
       className: "bg-greyseeeeee cursor-not-allowed",
@@ -49,7 +48,7 @@ export const PickingLandingPage = (): JSX.Element => {
           {/* Header */}
           <header className="flex flex-col w-[412px] items-start gap-4 absolute top-0 left-0 bg-transparent">
             <div className="flex h-12 items-center relative self-stretch w-full bg-white-100 border-b [border-bottom-style:solid] border-[#e0e0e0]">
-              <button 
+              <button
                 className="relative w-12 h-12 flex items-center justify-center hover:bg-gray-100 transition-colors duration-200"
                 onClick={handleMenuClick}
               >
