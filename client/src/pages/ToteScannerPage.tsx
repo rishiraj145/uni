@@ -99,7 +99,7 @@ export const ToteScannerPage: React.FC = () => {
             <div className="absolute top-6 left-0 right-0 flex items-center justify-center">
               <h2 className="text-white text-lg font-medium">Scan SHELF</h2>
               <button 
-                className="absolute right-6 w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center hover:bg-gray-500 transition-colors"
+                className="absolute right-6 w-10 h-10 bg-white rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors"
                 onClick={handleToteIconClick}
               >
               </button>
