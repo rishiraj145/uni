@@ -120,46 +120,50 @@ export const B2BPackingPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Picklist Items List */}
+        {/* Picklist Items Grid */}
         <div className="absolute top-[120px] left-0 right-0 bottom-0 overflow-y-auto">
-          <div className="p-4 space-y-3">
-            {picklistItems.map((item) => (
-              <Card key={item.id} className="border border-greysbordere-0e-0e-0">
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between">
-                    {/* Left Side - Picklist Code and Pending Info */}
-                    <div className="flex-1 min-w-0">
-                      {/* Picklist Code Title */}
-                      <h3 className="font-medium text-text-elementsprimary font-['Roboto',Helvetica] mb-2 text-left">
+          <div className="p-4">
+            <div className="grid grid-cols-1 gap-4">
+              {picklistItems.map((item) => (
+                <Card key={item.id} className="border border-greysbordere-0e-0e-0">
+                  <CardContent className="p-4">
+                    {/* Title Section */}
+                    <div className="mb-3">
+                      <h3 className="font-medium text-text-elementsprimary font-['Roboto',Helvetica] text-left">
                         {item.picklistCode}
                       </h3>
+                    </div>
+                    
+                    {/* 2x2 Content Grid */}
+                    <div className="grid grid-cols-2 gap-3 text-sm">
+                      {/* Top Left - Pending Quantity */}
+                      <div className="flex flex-col">
+                        <span className="text-text-elementssecondary opacity-80">Pending Quantity</span>
+                        <span className="text-text-elementsprimary font-medium">{item.pendingQuantity}</span>
+                      </div>
                       
-                      {/* Vertical Flex for Pending Information */}
-                      <div className="flex flex-col gap-1">
-                        <div className="text-sm opacity-80">
-                          <span className="text-text-elementssecondary">Pending Quantity: </span>
-                          <span className="text-text-elementsprimary font-medium">{item.pendingQuantity}</span>
-                        </div>
-                        <div className="text-sm opacity-80">
-                          <span className="text-text-elementssecondary">Pending Section: </span>
-                          <span className="text-text-elementsprimary font-medium">{item.pendingSection}</span>
-                        </div>
+                      {/* Top Right - Channel */}
+                      <div className="flex flex-col">
+                        <span className="text-text-elementssecondary opacity-80">Channel</span>
+                        <span className="text-text-elementsprimary font-medium">{item.channel}</span>
+                      </div>
+                      
+                      {/* Bottom Left - Pending Section */}
+                      <div className="flex flex-col">
+                        <span className="text-text-elementssecondary opacity-80">Pending Section</span>
+                        <span className="text-text-elementsprimary font-medium">{item.pendingSection}</span>
+                      </div>
+                      
+                      {/* Bottom Right - Customer */}
+                      <div className="flex flex-col">
+                        <span className="text-text-elementssecondary opacity-80">Customer</span>
+                        <span className="text-text-elementsprimary font-light">{item.customer}</span>
                       </div>
                     </div>
-
-                    <div className="flex flex-col items-end text-right ml-4 gap-1">
-                      <div className="text-sm text-text-elementsprimary font-medium">
-                        Channel:
-                        {item.channel}
-                      </div>
-                      <div className="text-sm text-text-elementsprimary font-light">
-                        Customer:{item.customer}
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
         </div>
       </div>
