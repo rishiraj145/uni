@@ -135,7 +135,6 @@ export const B2BPackingPage: React.FC = () => {
                       </h3>
                       
                       {/* Vertical Flex for Pending Information */}
-                      <div
                       <div className="flex flex-col gap-1">
                         <div className="text-sm opacity-80">
                           <span className="text-text-elementssecondary">Pending Quantity: </span>
