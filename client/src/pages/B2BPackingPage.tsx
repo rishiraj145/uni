@@ -126,24 +126,19 @@ export const B2BPackingPage: React.FC = () => {
             {picklistItems.map((item) => (
               <Card key={item.id} className="border border-greysbordere-0e-0e-0">
                 <CardContent className="p-4">
-                  {/* Main Container with Two Vertical Divs */}
-                  <div className="flex flex-col gap-3">
-                    {/* First Main Div - Title Section */}
-                    <div className="flex justify-between items-center">
-                      <h3 className="font-medium text-text-elementsprimary font-['Roboto',Helvetica] text-left">
+                  <div className="flex items-start justify-between">
+                    {/* Left Side - Picklist Code and Pending Info */}
+                    <div className="flex-1 min-w-0">
+                      {/* Picklist Code Title */}
+                      <h3 className="font-medium text-text-elementsprimary font-['Roboto',Helvetica] mb-2 text-left">
                         {item.picklistCode}
                       </h3>
-                      <div className="text-xs text-text-elementssecondary">
-                        Content Button
-                      </div>
-                    </div>
-                    
-                    {/* Second Main Div - 2x2 Matrix Content */}
-                    <div className="grid grid-cols-2 gap-4">
-                      {/* Bottom Left - Pending Information */}
+                      
+                      {/* Vertical Flex for Pending Information */}
+                      <div
                       <div className="flex flex-col gap-1">
                         <div className="text-sm opacity-80">
-                          <span className="text-text-elementssecondary">Pending Qty: </span>
+                          <span className="text-text-elementssecondary">Pending Quantity: </span>
                           <span className="text-text-elementsprimary font-medium">{item.pendingQuantity}</span>
                         </div>
                         <div className="text-sm opacity-80">
@@ -151,15 +146,15 @@ export const B2BPackingPage: React.FC = () => {
                           <span className="text-text-elementsprimary font-medium">{item.pendingSection}</span>
                         </div>
                       </div>
+                    </div>
 
-                      {/* Bottom Right - Channel and Customer */}
-                      <div className="flex flex-col gap-1 text-right">
-                        <div className="text-sm text-text-elementsprimary font-medium">
-                          {item.channel}
-                        </div>
-                        <div className="text-sm text-text-elementsprimary font-medium">
-                          {item.customer}
-                        </div>
+                    <div className="flex flex-col items-end text-right ml-4 gap-1">
+                      <div className="text-sm text-text-elementsprimary font-medium">
+                        Channel:
+                        {item.channel}
+                      </div>
+                      <div className="text-sm text-text-elementsprimary font-light">
+                        Customer:{item.customer}
                       </div>
                     </div>
                   </div>
