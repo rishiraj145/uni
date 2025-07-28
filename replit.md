@@ -49,6 +49,9 @@ This is a mobile-first picking application migrated from Figma to Replit. The ap
 - **2025-01-28**: Implemented real camera functionality for mobile barcode scanning
 - **2025-01-28**: Added camera permissions handling and error states
 - **2025-01-28**: Made scanning lens smaller (256x128px) with live video feed
+- **2025-01-28**: Created proper two-page flow: ToteScannerPage (camera) → ShelfDetailPage (shelf data)
+- **2025-01-28**: Added navigation from scanning to shelf detail page with mock barcode data
+- **2025-01-28**: Implemented shelf detail page matching Figma design with barcode display and shelf list
 
 ## User Preferences
 - Mobile-first design approach
