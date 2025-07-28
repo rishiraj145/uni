@@ -138,26 +138,26 @@ export const B2BPackingPage: React.FC = () => {
                     <div className="grid grid-cols-2 gap-3 text-sm">
                       {/* Top Left - Pending Quantity */}
                       <div className="flex flex-col">
-                        <span className="text-text-elementssecondary opacity-80">Pending Quantity</span>
-                        <span className="text-text-elementsprimary font-medium">{item.pendingQuantity}</span>
+                        <span className="text-text-elementssecondary opacity-80">Pending Quantity                        <span className="text-text-elementsprimary font-medium">{item.pendingQuantity}</span></span>
+
                       </div>
                       
                       {/* Top Right - Channel */}
                       <div className="flex flex-col">
-                        <span className="text-text-elementssecondary opacity-80">Channel</span>
-                        <span className="text-text-elementsprimary font-medium">{item.channel}</span>
+                        <span className="text-text-elementssecondary opacity-80">Channel                        <span className="text-text-elementsprimary font-medium">{item.channel}</span></span>
+
                       </div>
                       
                       {/* Bottom Left - Pending Section */}
                       <div className="flex flex-col">
-                        <span className="text-text-elementssecondary opacity-80">Pending Section</span>
-                        <span className="text-text-elementsprimary font-medium">{item.pendingSection}</span>
+                        <span className="text-text-elementssecondary opacity-80">Pending Section                        <span className="text-text-elementsprimary font-medium">{item.pendingSection}</span></span>
+
                       </div>
                       
                       {/* Bottom Right - Customer */}
                       <div className="flex flex-col">
-                        <span className="text-text-elementssecondary opacity-80">Customer</span>
-                        <span className="text-text-elementsprimary font-light">{item.customer}</span>
+                        <span className="text-text-elementssecondary opacity-80">Customer                        <span className="text-text-elementsprimary font-light">{item.customer}</span></span>
+
                       </div>
                     </div>
                   </CardContent>

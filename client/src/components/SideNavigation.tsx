@@ -32,9 +32,12 @@ export const SideNavigation: React.FC<SideNavigationProps> = ({
 
       {/* Sidebar */}
       <div
-        className={`fixed left-0 top-0 h-full w-80 bg-white-100 shadow-lg transform transition-transform duration-300 ease-in-out z-50 ${
+        className={`fixed top-0 h-full w-80 bg-white-100 shadow-lg transform transition-transform duration-300 ease-in-out z-50 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
+        style={{
+          left: `calc(50% - 206px)`, // 50% - (412px/2) = center of main container
+        }}
       >
         {/* Header with close button */}
         <div className="flex items-center justify-between p-4 border-b border-greysbordere-0e-0e-0">
