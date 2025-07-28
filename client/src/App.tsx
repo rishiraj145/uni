@@ -7,6 +7,7 @@ import NotFound from "@/pages/not-found";
 
 import { PickingLandingPage } from "@/pages/PickingLandingPage";
 import { B2BPackingPage } from "@/pages/B2BPackingPage";
+import { PicklistDetailPage } from "@/pages/PicklistDetailPage";
 
 function Router() {
   return (
@@ -14,6 +15,7 @@ function Router() {
       {/* Add pages below */}
       <Route path="/" component={PickingLandingPage} />
       <Route path="/b2b-packing" component={B2BPackingPage} />
+      <Route path="/picklist/:id" component={PicklistDetailPage} />
       {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>

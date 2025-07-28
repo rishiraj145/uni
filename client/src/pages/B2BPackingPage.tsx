@@ -125,7 +125,11 @@ export const B2BPackingPage: React.FC = () => {
           <div className="p-4">
             <div className="grid grid-cols-1 gap-4">
               {picklistItems.map((item) => (
-                <Card key={item.id} className="border border-greysbordere-0e-0e-0">
+                <Card 
+                  key={item.id} 
+                  className="border border-greysbordere-0e-0e-0 cursor-pointer hover:shadow-md transition-shadow duration-200"
+                  onClick={() => setLocation(`/picklist/${item.picklistCode}`)}
+                >
                   <CardContent className="p-4">
                     {/* Title Section */}
                     <div className="mb-3">
@@ -138,26 +142,26 @@ export const B2BPackingPage: React.FC = () => {
                     <div className="grid grid-cols-2 gap-3 text-sm">
                       {/* Top Left - Pending Quantity */}
                       <div className="flex flex-col">
-                        <span className="text-text-elementssecondary opacity-80">Pending Quantity                        <span className="text-text-elementsprimary font-medium">{item.pendingQuantity}</span></span>
-
+                        <span className="text-text-elementssecondary opacity-80">Pending Quantity</span>
+                        <span className="text-text-elementsprimary font-medium">{item.pendingQuantity}</span>
                       </div>
                       
                       {/* Top Right - Channel */}
                       <div className="flex flex-col">
-                        <span className="text-text-elementssecondary opacity-80">Channel                        <span className="text-text-elementsprimary font-medium">{item.channel}</span></span>
-
+                        <span className="text-text-elementssecondary opacity-80">Channel</span>
+                        <span className="text-text-elementsprimary font-medium">{item.channel}</span>
                       </div>
                       
                       {/* Bottom Left - Pending Section */}
                       <div className="flex flex-col">
-                        <span className="text-text-elementssecondary opacity-80">Pending Section                        <span className="text-text-elementsprimary font-medium">{item.pendingSection}</span></span>
-
+                        <span className="text-text-elementssecondary opacity-80">Pending Section</span>
+                        <span className="text-text-elementsprimary font-medium">{item.pendingSection}</span>
                       </div>
                       
                       {/* Bottom Right - Customer */}
                       <div className="flex flex-col">
-                        <span className="text-text-elementssecondary opacity-80">Customer                        <span className="text-text-elementsprimary font-light">{item.customer}</span></span>
-
+                        <span className="text-text-elementssecondary opacity-80">Customer</span>
+                        <span className="text-text-elementsprimary font-light">{item.customer}</span>
                       </div>
                     </div>
                   </CardContent>
