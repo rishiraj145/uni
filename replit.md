@@ -42,8 +42,9 @@ This is a mobile-first picking application migrated from Figma to Replit. The ap
 - **2025-01-28**: Implemented A-Z/Z-A shelf code sorting functionality
 - **2025-01-28**: Enhanced UX with clickable section header and sort controls
 - **2025-01-28**: Created ToteScannerPage with barcode scanning interface
-- **2025-01-28**: Added shelf card click navigation to tote scanner
-- **2025-01-28**: Implemented two-part layout: scan tote (top) and instructions (bottom)
+- **2025-01-28**: Updated flow: START PICKING button → Tote Scanner (Scan SHELF)
+- **2025-01-28**: Implemented shelf barcode layout with AISLE/SECTION/LEVEL format
+- **2025-01-28**: Added pending/scanned shelf tabs below scanner section
 
 ## User Preferences
 - Mobile-first design approach

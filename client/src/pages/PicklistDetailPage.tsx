@@ -69,7 +69,7 @@ export const PicklistDetailPage: React.FC = () => {
 
   const handleStartPicking = () => {
     console.log("Start picking clicked");
-    // Navigate to picking interface or start picking flow
+    setLocation(`/tote-scanner/${picklistId}/start`);
   };
 
   const handleMoreOptions = () => {
@@ -165,8 +165,7 @@ export const PicklistDetailPage: React.FC = () => {
               sortedShelves.map((shelf) => (
                 <Card
                   key={shelf.id}
-                  className="border border-gray-200 rounded-lg shadow-sm cursor-pointer hover:shadow-md transition-shadow duration-200"
-                  onClick={() => setLocation(`/tote-scanner/${picklistId}/${shelf.shelfCode}`)}
+                  className="border border-gray-200 rounded-lg shadow-sm"
                 >
                   <CardContent className="p-4">
                     <h3 className="text-lg font-semibold text-gray-900 mb-3">
