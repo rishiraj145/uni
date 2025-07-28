@@ -1,69 +1,58 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { ArrowLeft, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocation, useParams } from "wouter";
+
+// Mock shelf data based on scanned barcode
+const mockShelfData = {
+  aisle: "15",
+  section: "006", 
+  level: "A",
+  shelves: [
+    {
+      code: "SHELF_001",
+      skuCount: 5,
+      pendingQty: 120
+    },
+    {
+      code: "SHELF_002", 
+      skuCount: 3,
+      pendingQty: 80
+    }
+  ]
+};
 
 export const ToteScannerPage: React.FC = () => {
   const params = useParams();
   const picklistId = params.id || "PK1000";
   const [, setLocation] = useLocation();
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
-  const [scannedData, setScannedData] = useState<string>("");
-  const [cameraError, setCameraError] = useState<string>("");
-
-  // Start camera when component mounts
-  useEffect(() => {
-    startCamera();
-    return () => {
-      stopCamera();
-    };
-  }, []);
-
-  const startCamera = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          facingMode: "environment", // Use back camera for barcode scanning
-          width: { ideal: 1280 },
-          height: { ideal: 720 }
-        }
-      });
-      
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        setCameraStream(stream);
-        setCameraError("");
-      }
-    } catch (error) {
-      console.error("Error accessing camera:", error);
-      setCameraError("Camera access denied. Please allow camera permissions and refresh.");
-    }
-  };
-
-  const stopCamera = () => {
-    if (cameraStream) {
-      cameraStream.getTracks().forEach(track => track.stop());
-      setCameraStream(null);
-    }
-  };
+  const [scannedShelf, setScannedShelf] = useState(false);
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
   const handleBack = () => {
-    stopCamera();
     setLocation(`/picklist/${picklistId}`);
   };
 
   const handleClose = () => {
-    stopCamera();
     setLocation(`/picklist/${picklistId}`);
   };
 
-  const handleToteIconClick = () => {
-    console.log("Tote icon clicked - Scanner action");
-    const mockBarcodeData = "SHELF_001_12345";
-    setScannedData(mockBarcodeData);
-    console.log("Scanned data:", mockBarcodeData);
+  const handleScanShelf = () => {
+    // Simulate scanning a shelf barcode
+    setScannedShelf(true);
   };
+
+  const toggleSort = () => {
+    setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
+  };
+
+  const sortedShelves = [...mockShelfData.shelves].sort((a, b) => {
+    if (sortOrder === 'asc') {
+      return a.code.localeCompare(b.code);
+    } else {
+      return b.code.localeCompare(a.code);
+    }
+  });
 
   return (
     <div className="bg-white flex flex-row justify-center w-full min-h-screen">
@@ -91,97 +80,113 @@ export const ToteScannerPage: React.FC = () => {
           </Button>
         </header>
 
-        {/* Content */}
-        <div className="flex flex-col h-[60%]">
-          {/* Scan SHELF Section - Camera View */}
-          <div className="bg-red-700 flex flex-col items-center justify-center relative flex-1 rounded-xl">
-            {/* Scan SHELF Title */}
-            <div className="absolute top-6 left-0 right-0 flex items-center justify-center">
-              <h2 className="text-white text-lg font-medium">Scan SHELF</h2>
-              <button 
-                className="absolute right-6 w-10 h-10 bg-white rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors"
-                onClick={handleToteIconClick}
-              >
-              </button>
-            </div>
-
-            {/* Camera Viewfinder */}
-            <div className="relative flex items-center justify-center">
-              {/* Camera Video Stream */}
-              <div className="relative w-64 h-32 rounded-2xl overflow-hidden">
-                <video
-                  ref={videoRef}
-                  autoPlay
-                  playsInline
-                  muted
-                  className="w-full h-full object-cover"
-                />
-                
-                {/* Scanning Frame Overlay */}
-                <div className="absolute inset-0 border-2 border-white border-opacity-60 rounded-2xl">
-                  {/* Corner brackets */}
-                  <div className="absolute top-1 left-1 w-6 h-6 border-t-2 border-l-2 border-white rounded-tl-lg"></div>
-                  <div className="absolute top-1 right-1 w-6 h-6 border-t-2 border-r-2 border-white rounded-tr-lg"></div>
-                  <div className="absolute bottom-1 left-1 w-6 h-6 border-b-2 border-l-2 border-white rounded-bl-lg"></div>
-                  <div className="absolute bottom-1 right-1 w-6 h-6 border-b-2 border-r-2 border-white rounded-br-lg"></div>
-                  
-                  {/* Scanning line animation */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-4/5 h-0.5 bg-red-500 animate-pulse shadow-lg"></div>
-                  </div>
-                  
-                  {/* Center instruction */}
-                  {!cameraError && (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="text-white text-xs text-center bg-black bg-opacity-70 px-3 py-1 rounded-full backdrop-blur-sm">
-                        Position barcode here
-                      </div>
-                    </div>
-                  )}
-                </div>
-                
-                {/* Camera Error Fallback */}
-                {cameraError && (
-                  <div className="absolute inset-0 bg-gray-800 flex items-center justify-center rounded-2xl">
-                    <div className="text-white text-xs text-center px-3">
-                      {cameraError}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Scanned Data Display */}
-            {scannedData && (
-              <div className="absolute bottom-6 left-0 right-0 flex justify-center">
-                <div className="bg-green-600 text-white px-4 py-2 rounded-lg">
-                  Scanned: {scannedData}
-                </div>
-              </div>
-            )}
+        {/* Scan SHELF Section */}
+        <div className="bg-gray-800 p-4 relative">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-white text-lg font-medium">Scan SHELF</h2>
+            <button 
+              className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center hover:bg-gray-500 transition-colors"
+              onClick={handleScanShelf}
+            >
+              <Trash2 className="h-5 w-5 text-white" />
+            </button>
           </div>
 
-          {/* Bottom Instruction */}
-          <div className="bg-white flex flex-col items-center justify-center py-8">
-            <p className="text-gray-700 text-lg font-medium mb-2">
-              Scan tote to continue picking
-            </p>
-            
-            {/* Manual Input for Testing */}
-            <button
-              onClick={handleToteIconClick}
-              className="text-sm text-blue-600 hover:text-blue-800 underline"
-            >
-              Simulate Scan (for testing)
-            </button>
-            
-            {scannedData && (
-              <div className="mt-3 text-sm text-green-600">
-                Ready to continue with: {scannedData}
+          {/* Barcode Display */}
+          <div className="bg-white rounded-lg p-4 mx-2">
+            <div className="flex justify-center mb-2">
+              {/* Barcode lines */}
+              <div className="flex items-end gap-px">
+                {Array.from({length: 40}, (_, i) => (
+                  <div 
+                    key={i}
+                    className="bg-black"
+                    style={{
+                      width: Math.random() > 0.5 ? '2px' : '1px',
+                      height: `${20 + Math.random() * 20}px`
+                    }}
+                  />
+                ))}
               </div>
-            )}
+            </div>
+            
+            {/* Location Info */}
+            <div className="flex justify-between items-center text-center">
+              <div className="flex-1">
+                <div className="text-black text-2xl font-bold">{mockShelfData.aisle}</div>
+                <div className="text-gray-600 text-sm">AISLE</div>
+                <div className="text-xl">↓</div>
+              </div>
+              <div className="flex-1">
+                <div className="text-black text-2xl font-bold">{mockShelfData.section}</div>
+                <div className="text-gray-600 text-sm">SECTION</div>
+              </div>
+              <div className="flex-1">
+                <div className="text-black text-2xl font-bold">{mockShelfData.level}</div>
+                <div className="text-gray-600 text-sm">LEVEL</div>
+                <div className="text-xl">↓</div>
+              </div>
+            </div>
           </div>
         </div>
+
+        {/* Tabs Section */}
+        <div className="bg-white border-b border-gray-200">
+          <div className="flex">
+            <button className="flex-1 py-3 px-4 text-blue-600 border-b-2 border-blue-600 font-medium">
+              Pending Shelf <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs ml-1">2</span>
+            </button>
+            <button className="flex-1 py-3 px-4 text-gray-500 font-medium">
+              Scanned Shelf <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs ml-1">0</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Section Header */}
+        <div className="bg-gray-100 px-4 py-3 flex justify-between items-center">
+          <div className="text-gray-800 font-medium">SECTION B</div>
+          <button 
+            onClick={toggleSort}
+            className="flex items-center gap-2 text-gray-600 hover:text-gray-800"
+          >
+            <span className="text-sm">Shelf Code</span>
+            <span className="text-lg">{sortOrder === 'asc' ? 'A↑' : 'Z↓'}</span>
+          </button>
+        </div>
+
+        {/* Shelf List */}
+        <div className="flex-1 overflow-y-auto">
+          {sortedShelves.map((shelf, index) => (
+            <div key={shelf.code} className="bg-white border-b border-gray-200 p-4">
+              <div className="flex justify-between items-center">
+                <div>
+                  <div className="text-lg font-semibold text-gray-900 mb-1">
+                    {shelf.code}
+                  </div>
+                  <div className="text-gray-500 text-sm">
+                    SKU Count <span className="font-semibold text-gray-700">{shelf.skuCount}</span>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-gray-500 text-sm mb-1">Pending Qty</div>
+                  <div className="text-lg font-bold text-gray-900">{shelf.pendingQty}</div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Test Button - Remove in production */}
+        {!scannedShelf && (
+          <div className="fixed bottom-4 right-4">
+            <button
+              onClick={handleScanShelf}
+              className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-blue-700 transition-colors"
+            >
+              Simulate Scan
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
