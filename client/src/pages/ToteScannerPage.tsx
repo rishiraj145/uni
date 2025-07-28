@@ -1,40 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import { ArrowLeft, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { useLocation, useParams } from "wouter";
-
-interface ShelfItem {
-  id: string;
-  shelfCode: string;
-  skuCount: number;
-  pendingQty: number;
-}
 
 export const ToteScannerPage: React.FC = () => {
   const params = useParams();
   const picklistId = params.id || "PK1000";
-  const shelfCode = params.shelf || "start";
   const [, setLocation] = useLocation();
-  const [activeTab, setActiveTab] = useState<"pending" | "scanned">("pending");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-
-  // Sample shelf data
-  const pendingShelves: ShelfItem[] = [
-    { id: "1", shelfCode: "SHELF_001", skuCount: 5, pendingQty: 120 },
-    { id: "2", shelfCode: "SHELF_002", skuCount: 3, pendingQty: 80 },
-  ];
-
-  const scannedShelves: ShelfItem[] = [];
-
-  // Sort shelves based on sort order
-  const sortedShelves = [...(activeTab === "pending" ? pendingShelves : scannedShelves)].sort((a, b) => {
-    if (sortOrder === "asc") {
-      return a.shelfCode.localeCompare(b.shelfCode);
-    } else {
-      return b.shelfCode.localeCompare(a.shelfCode);
-    }
-  });
 
   const handleBack = () => {
     setLocation(`/picklist/${picklistId}`);
@@ -45,11 +17,7 @@ export const ToteScannerPage: React.FC = () => {
   };
 
   const handleToteIconClick = () => {
-    console.log("Tote icon clicked");
-  };
-
-  const handleSortToggle = () => {
-    setSortOrder(prev => prev === "asc" ? "desc" : "asc");
+    console.log("Tote icon clicked - Scanner action");
   };
 
   return (
@@ -79,9 +47,9 @@ export const ToteScannerPage: React.FC = () => {
         </header>
 
         {/* Content */}
-        <div className="flex flex-col">
+        <div className="flex flex-col h-full">
           {/* Scan SHELF Section - Camera View */}
-          <div className="bg-black flex flex-col items-center justify-center relative h-64">
+          <div className="bg-black flex flex-col items-center justify-center relative flex-1">
             {/* Scan SHELF Title */}
             <div className="absolute top-6 left-0 right-0 flex items-center justify-center">
               <h2 className="text-white text-lg font-medium">Scan SHELF</h2>
@@ -96,21 +64,21 @@ export const ToteScannerPage: React.FC = () => {
             {/* Camera Viewfinder */}
             <div className="relative flex items-center justify-center">
               {/* Scanning Frame */}
-              <div className="relative w-64 h-32 border-2 border-white border-opacity-50 rounded-lg">
+              <div className="relative w-80 h-40 border-2 border-white border-opacity-60 rounded-2xl">
                 {/* Corner brackets */}
-                <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-white"></div>
-                <div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-white"></div>
-                <div className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-white"></div>
-                <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-white"></div>
+                <div className="absolute top-2 left-2 w-8 h-8 border-t-3 border-l-3 border-white rounded-tl-lg"></div>
+                <div className="absolute top-2 right-2 w-8 h-8 border-t-3 border-r-3 border-white rounded-tr-lg"></div>
+                <div className="absolute bottom-2 left-2 w-8 h-8 border-b-3 border-l-3 border-white rounded-bl-lg"></div>
+                <div className="absolute bottom-2 right-2 w-8 h-8 border-b-3 border-r-3 border-white rounded-br-lg"></div>
                 
                 {/* Scanning line animation */}
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-full h-0.5 bg-red-500 animate-pulse"></div>
+                  <div className="w-4/5 h-0.5 bg-red-500 animate-pulse shadow-lg"></div>
                 </div>
                 
                 {/* Center instruction */}
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-white text-sm text-center bg-black bg-opacity-50 px-3 py-1 rounded">
+                  <div className="text-white text-sm text-center bg-black bg-opacity-70 px-4 py-2 rounded-full backdrop-blur-sm">
                     Position barcode here
                   </div>
                 </div>
@@ -118,72 +86,11 @@ export const ToteScannerPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Tabs and Shelf List Section */}
-          <div className="flex flex-col pt-4 px-4 pb-4">
-            {/* Tabs */}
-            <div className="flex mb-6">
-              <button
-                className={`flex-1 pb-2 text-sm font-medium border-b-2 transition-colors ${
-                  activeTab === "pending"
-                    ? "text-blue-600 border-blue-600"
-                    : "text-gray-500 border-transparent hover:text-gray-700"
-                }`}
-                onClick={() => setActiveTab("pending")}
-              >
-                Pending Shelf ({pendingShelves.length})
-              </button>
-              <button
-                className={`flex-1 pb-2 text-sm font-medium border-b-2 transition-colors ${
-                  activeTab === "scanned"
-                    ? "text-blue-600 border-blue-600"
-                    : "text-gray-500 border-transparent hover:text-gray-700"
-                }`}
-                onClick={() => setActiveTab("scanned")}
-              >
-                Scanned Shelf ({scannedShelves.length})
-              </button>
-            </div>
-
-            {/* Section Header */}
-            <div className="flex items-center justify-between mb-4 px-2">
-              <span className="text-sm font-medium text-gray-600 uppercase font-bold">SECTION B</span>
-              <button
-                onClick={handleSortToggle}
-                className="flex items-center gap-1 hover:bg-gray-100 px-2 py-1 rounded transition-colors"
-              >
-                <span className="text-sm text-gray-500">Shelf Code</span>
-                <span className="text-sm text-gray-400">{sortOrder === "asc" ? "A-Z" : "Z-A"}</span>
-              </button>
-            </div>
-
-            {/* Shelf List */}
-            <div className="flex flex-col gap-3">
-              {activeTab === "pending" ? (
-                sortedShelves.map((shelf) => (
-                  <Card key={shelf.id} className="border border-gray-200 rounded-lg shadow-sm">
-                    <CardContent className="p-4">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                        {shelf.shelfCode}
-                      </h3>
-                      <div className="flex items-center justify-between">
-                        <div className="flex flex-col">
-                          <span className="text-sm text-gray-500">SKU Count</span>
-                          <span className="text-lg font-medium text-gray-900">{shelf.skuCount}</span>
-                        </div>
-                        <div className="flex flex-col items-end">
-                          <span className="text-sm text-gray-500">Pending Qty</span>
-                          <span className="text-lg font-medium text-gray-900">{shelf.pendingQty}</span>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))
-              ) : (
-                <div className="flex flex-col items-center justify-center py-12 text-gray-500">
-                  <p className="text-sm">No scanned shelves yet</p>
-                </div>
-              )}
-            </div>
+          {/* Bottom Instruction */}
+          <div className="bg-white flex items-center justify-center py-8">
+            <p className="text-gray-700 text-lg font-medium">
+              Scan tote to continue picking
+            </p>
           </div>
         </div>
       </div>
