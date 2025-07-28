@@ -25,29 +25,8 @@ export const PickingLandingPage = (): JSX.Element => {
     <div className="bg-white flex flex-row justify-center w-full">
       <div className="bg-white-100 overflow-hidden w-[412px] h-[917px]">
         <div className="relative h-[917px]">
-          {/* Status bars */}
-          <img
-            className="absolute w-[412px] h-[35px] top-0 left-0"
-            alt="Top status bar"
-            src="/figmaAssets/top-status-bar.png"
-          />
-
-          <div className="absolute w-[412px] h-[917px] top-0 left-0">
-            <img
-              className="absolute w-[412px] h-[35px] top-0 left-0"
-              alt="Phone status bar"
-              src="/figmaAssets/phone-status-bar.png"
-            />
-
-            <img
-              className="absolute w-[412px] h-[45px] top-[872px] left-0"
-              alt="Phone nav bar"
-              src="/figmaAssets/phone-nav-bar.png"
-            />
-          </div>
-
           {/* Header */}
-          <header className="flex flex-col w-[412px] items-start gap-4 absolute top-[35px] left-0 bg-transparent">
+          <header className="flex flex-col w-[412px] items-start gap-4 absolute top-0 left-0 bg-transparent">
             <div className="flex h-12 items-center relative self-stretch w-full bg-white-100 border-b [border-bottom-style:solid] border-[#e0e0e0]">
               <button className="relative w-12 h-12 flex items-center justify-center">
                 <MenuIcon className="h-6 w-6 text-text-elementsprimary" />
