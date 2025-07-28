@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { ArrowLeft, MoreVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose, DialogDescription } from "@/components/ui/dialog";
 import { useLocation, useParams } from "wouter";
 
 interface ShelfItem {
@@ -188,36 +188,39 @@ export const PicklistDetailPage: React.FC = () => {
           </Button>
         </div>
 
-        {/* Section Selection Dialog */}
+        {/* Section Selection Bottom Sheet */}
         <Dialog open={isSectionDialogOpen} onOpenChange={setIsSectionDialogOpen}>
-          <DialogContent className="w-[300px] max-w-[90vw] rounded-xl">
+          <DialogContent className="fixed bottom-0 left-0 right-0 top-auto max-w-none w-full rounded-t-2xl border-0 p-0 m-0 translate-x-0 translate-y-0 data-[state=open]:slide-in-from-bottom data-[state=closed]:slide-out-to-bottom bg-white">
             <DialogHeader className="sr-only">
               <DialogTitle>Select Section</DialogTitle>
+              <DialogDescription>Choose a section from the list</DialogDescription>
             </DialogHeader>
             
-            <div className="flex justify-between items-center mb-6">
+            {/* Header with Cancel/Confirm */}
+            <div className="flex justify-between items-center p-4 border-b border-gray-200">
               <DialogClose asChild>
-                <Button variant="ghost" className="text-blue-600 hover:text-blue-700 font-medium">
+                <Button variant="ghost" className="text-blue-600 hover:text-blue-700 font-medium p-0 h-auto">
                   CANCEL
                 </Button>
               </DialogClose>
               <Button 
                 variant="ghost" 
-                className="text-blue-600 hover:text-blue-700 font-medium"
+                className="text-blue-600 hover:text-blue-700 font-medium p-0 h-auto"
                 onClick={() => setIsSectionDialogOpen(false)}
               >
                 CONFIRM
               </Button>
             </div>
 
-            <div className="flex flex-col gap-4">
+            {/* Section List */}
+            <div className="flex flex-col py-4">
               {sections.map((section) => (
                 <button
                   key={section.id}
-                  className={`text-center py-3 text-lg transition-colors ${
+                  className={`text-center py-4 text-lg transition-colors border-b border-gray-100 last:border-b-0 ${
                     selectedSection === section.name
-                      ? "text-blue-600 font-medium"
-                      : "text-gray-800 hover:text-blue-600"
+                      ? "text-blue-600 font-medium bg-blue-50"
+                      : "text-gray-800 hover:text-blue-600 hover:bg-gray-50"
                   }`}
                   onClick={() => handleSectionSelect(section.name)}
                 >
@@ -225,6 +228,9 @@ export const PicklistDetailPage: React.FC = () => {
                 </button>
               ))}
             </div>
+
+            {/* Bottom safe area for mobile */}
+            <div className="h-6 bg-white"></div>
           </DialogContent>
         </Dialog>
       </div>
