@@ -1,3 +1,4 @@
+@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -23,10 +24,6 @@
   --text-elementssecondary: rgba(117, 117, 117, 1);
   --white-100: rgba(255, 255, 255, 1);
 }
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 @layer base {
   :root {
