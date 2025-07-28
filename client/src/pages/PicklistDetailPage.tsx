@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ArrowLeft, MoreVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { useLocation, useParams } from "wouter";
 
 interface ShelfItem {
@@ -11,11 +12,20 @@ interface ShelfItem {
   pendingQty: number;
 }
 
+interface Section {
+  id: string;
+  name: string;
+  count: number;
+}
+
 export const PicklistDetailPage: React.FC = () => {
   const params = useParams();
   const picklistId = params.id || "PK1000";
   const [, setLocation] = useLocation();
   const [activeTab, setActiveTab] = useState<"pending" | "scanned">("pending");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [isSectionDialogOpen, setIsSectionDialogOpen] = useState(false);
+  const [selectedSection, setSelectedSection] = useState<string>("Section A");
 
   // Sample shelf data
   const pendingShelves: ShelfItem[] = [
@@ -26,6 +36,23 @@ export const PicklistDetailPage: React.FC = () => {
   ];
 
   const scannedShelves: ShelfItem[] = [];
+
+  // Sample sections data
+  const sections: Section[] = [
+    { id: "a", name: "Section A", count: 50 },
+    { id: "b", name: "Section B", count: 200 },
+    { id: "c", name: "Section C", count: 35 },
+    { id: "d", name: "Section D", count: 13 },
+  ];
+
+  // Sort shelves based on sort order
+  const sortedShelves = [...(activeTab === "pending" ? pendingShelves : scannedShelves)].sort((a, b) => {
+    if (sortOrder === "asc") {
+      return a.shelfCode.localeCompare(b.shelfCode);
+    } else {
+      return b.shelfCode.localeCompare(a.shelfCode);
+    }
+  });
 
   const handleBack = () => {
     setLocation("/b2b-packing");
@@ -38,6 +65,19 @@ export const PicklistDetailPage: React.FC = () => {
 
   const handleMoreOptions = () => {
     console.log("More options clicked");
+  };
+
+  const handleSortToggle = () => {
+    setSortOrder(prev => prev === "asc" ? "desc" : "asc");
+  };
+
+  const handleSectionClick = () => {
+    setIsSectionDialogOpen(true);
+  };
+
+  const handleSectionSelect = (sectionName: string) => {
+    setSelectedSection(sectionName);
+    setIsSectionDialogOpen(false);
   };
 
   return (
@@ -93,17 +133,25 @@ export const PicklistDetailPage: React.FC = () => {
 
           {/* Section Header */}
           <div className="flex items-center justify-between mb-4 px-2">
-            <span className="text-sm font-medium text-gray-600 uppercase">SECTION</span>
-            <div className="flex items-center gap-1">
+            <button
+              onClick={handleSectionClick}
+              className="text-sm font-medium text-gray-600 uppercase hover:text-gray-800 transition-colors"
+            >
+              SECTION
+            </button>
+            <button
+              onClick={handleSortToggle}
+              className="flex items-center gap-1 hover:bg-gray-100 px-2 py-1 rounded transition-colors"
+            >
               <span className="text-sm text-gray-500">Shelf Code</span>
-              <span className="text-sm text-gray-400">A-Z</span>
-            </div>
+              <span className="text-sm text-gray-400">{sortOrder === "asc" ? "A-Z" : "Z-A"}</span>
+            </button>
           </div>
 
           {/* Shelf List */}
           <div className="flex flex-col gap-3">
             {activeTab === "pending" ? (
-              pendingShelves.map((shelf) => (
+              sortedShelves.map((shelf) => (
                 <Card key={shelf.id} className="border border-gray-200 rounded-lg shadow-sm">
                   <CardContent className="p-4">
                     <h3 className="text-lg font-semibold text-gray-900 mb-3">
@@ -139,6 +187,46 @@ export const PicklistDetailPage: React.FC = () => {
             START PICKING
           </Button>
         </div>
+
+        {/* Section Selection Dialog */}
+        <Dialog open={isSectionDialogOpen} onOpenChange={setIsSectionDialogOpen}>
+          <DialogContent className="w-[300px] max-w-[90vw] rounded-xl">
+            <DialogHeader className="sr-only">
+              <DialogTitle>Select Section</DialogTitle>
+            </DialogHeader>
+            
+            <div className="flex justify-between items-center mb-6">
+              <DialogClose asChild>
+                <Button variant="ghost" className="text-blue-600 hover:text-blue-700 font-medium">
+                  CANCEL
+                </Button>
+              </DialogClose>
+              <Button 
+                variant="ghost" 
+                className="text-blue-600 hover:text-blue-700 font-medium"
+                onClick={() => setIsSectionDialogOpen(false)}
+              >
+                CONFIRM
+              </Button>
+            </div>
+
+            <div className="flex flex-col gap-4">
+              {sections.map((section) => (
+                <button
+                  key={section.id}
+                  className={`text-center py-3 text-lg transition-colors ${
+                    selectedSection === section.name
+                      ? "text-blue-600 font-medium"
+                      : "text-gray-800 hover:text-blue-600"
+                  }`}
+                  onClick={() => handleSectionSelect(section.name)}
+                >
+                  {section.name} ({section.count})
+                </button>
+              ))}
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

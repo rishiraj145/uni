@@ -38,6 +38,9 @@ This is a mobile-first picking application migrated from Figma to Replit. The ap
 - **2025-01-28**: Created PicklistDetailPage with shelf-level view matching provided screenshot
 - **2025-01-28**: Implemented card click navigation from B2B Packing page to picklist details
 - **2025-01-28**: Added proper routing with wouter for picklist detail pages
+- **2025-01-28**: Added section selection dialog with Cancel/Confirm buttons and section list
+- **2025-01-28**: Implemented A-Z/Z-A shelf code sorting functionality
+- **2025-01-28**: Enhanced UX with clickable section header and sort controls
 
 ## User Preferences
 - Mobile-first design approach
