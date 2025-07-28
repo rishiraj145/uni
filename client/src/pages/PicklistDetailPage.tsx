@@ -2,7 +2,14 @@ import React, { useState } from "react";
 import { ArrowLeft, MoreVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogClose,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { useLocation, useParams } from "wouter";
 
 interface ShelfItem {
@@ -46,7 +53,9 @@ export const PicklistDetailPage: React.FC = () => {
   ];
 
   // Sort shelves based on sort order
-  const sortedShelves = [...(activeTab === "pending" ? pendingShelves : scannedShelves)].sort((a, b) => {
+  const sortedShelves = [
+    ...(activeTab === "pending" ? pendingShelves : scannedShelves),
+  ].sort((a, b) => {
     if (sortOrder === "asc") {
       return a.shelfCode.localeCompare(b.shelfCode);
     } else {
@@ -68,7 +77,7 @@ export const PicklistDetailPage: React.FC = () => {
   };
 
   const handleSortToggle = () => {
-    setSortOrder(prev => prev === "asc" ? "desc" : "asc");
+    setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
   };
 
   const handleSectionClick = () => {
@@ -86,7 +95,7 @@ export const PicklistDetailPage: React.FC = () => {
         {/* Header */}
         <header className="flex h-12 items-center justify-between w-full bg-white border-b border-[#e0e0e0] px-4">
           <div className="flex items-center gap-3">
-            <button 
+            <button
               className="flex items-center justify-center w-8 h-8 hover:bg-gray-100 rounded transition-colors duration-200"
               onClick={handleBack}
             >
@@ -96,8 +105,8 @@ export const PicklistDetailPage: React.FC = () => {
               {picklistId}
             </h1>
           </div>
-          
-          <button 
+
+          <button
             className="flex items-center justify-center w-8 h-8 hover:bg-gray-100 rounded transition-colors duration-200"
             onClick={handleMoreOptions}
           >
@@ -144,7 +153,9 @@ export const PicklistDetailPage: React.FC = () => {
               className="flex items-center gap-1 hover:bg-gray-100 px-2 py-1 rounded transition-colors"
             >
               <span className="text-sm text-gray-500">Shelf Code</span>
-              <span className="text-sm text-gray-400">{sortOrder === "asc" ? "A-Z" : "Z-A"}</span>
+              <span className="text-sm text-gray-400">
+                {sortOrder === "asc" ? "A-Z" : "Z-A"}
+              </span>
             </button>
           </div>
 
@@ -152,7 +163,10 @@ export const PicklistDetailPage: React.FC = () => {
           <div className="flex flex-col gap-3">
             {activeTab === "pending" ? (
               sortedShelves.map((shelf) => (
-                <Card key={shelf.id} className="border border-gray-200 rounded-lg shadow-sm">
+                <Card
+                  key={shelf.id}
+                  className="border border-gray-200 rounded-lg shadow-sm"
+                >
                   <CardContent className="p-4">
                     <h3 className="text-lg font-semibold text-gray-900 mb-3">
                       {shelf.shelfCode}
@@ -160,11 +174,17 @@ export const PicklistDetailPage: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <div className="flex flex-col">
                         <span className="text-sm text-gray-500">SKU Count</span>
-                        <span className="text-lg font-medium text-gray-900">{shelf.skuCount}</span>
+                        <span className="text-lg font-medium text-gray-900">
+                          {shelf.skuCount}
+                        </span>
                       </div>
                       <div className="flex flex-col items-end">
-                        <span className="text-sm text-gray-500">Pending Qty</span>
-                        <span className="text-lg font-medium text-gray-900">{shelf.pendingQty}</span>
+                        <span className="text-sm text-gray-500">
+                          Pending Qty
+                        </span>
+                        <span className="text-lg font-medium text-gray-900">
+                          {shelf.pendingQty}
+                        </span>
                       </div>
                     </div>
                   </CardContent>
@@ -180,7 +200,7 @@ export const PicklistDetailPage: React.FC = () => {
 
         {/* Fixed Bottom Button */}
         <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-[412px] bg-white border-t border-gray-200 p-4">
-          <Button 
+          <Button
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg transition-colors duration-200"
             onClick={handleStartPicking}
           >
@@ -189,22 +209,30 @@ export const PicklistDetailPage: React.FC = () => {
         </div>
 
         {/* Section Selection Bottom Sheet */}
-        <Dialog open={isSectionDialogOpen} onOpenChange={setIsSectionDialogOpen}>
-          <DialogContent className="fixed bottom-0 left-0 right-0 top-auto max-w-none w-full rounded-t-2xl border-0 p-0 m-0 translate-x-0 translate-y-0 data-[state=open]:slide-in-from-bottom data-[state=closed]:slide-out-to-bottom bg-white">
+        <Dialog
+          open={isSectionDialogOpen}
+          onOpenChange={setIsSectionDialogOpen}
+        >
+          <DialogContent className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-[412px] max-w-[90vw] top-auto rounded-t-2xl border-0 p-0 m-0 data-[state=open]:slide-in-from-bottom data-[state=closed]:slide-out-to-bottom bg-white shadow-xl [&>button]:hidden">
             <DialogHeader className="sr-only">
               <DialogTitle>Select Section</DialogTitle>
-              <DialogDescription>Choose a section from the list</DialogDescription>
+              <DialogDescription>
+                Choose a section from the list
+              </DialogDescription>
             </DialogHeader>
-            
+
             {/* Header with Cancel/Confirm */}
             <div className="flex justify-between items-center p-4 border-b border-gray-200">
               <DialogClose asChild>
-                <Button variant="ghost" className="text-blue-600 hover:text-blue-700 font-medium p-0 h-auto">
+                <Button
+                  variant="ghost"
+                  className="text-blue-600 hover:text-blue-700 font-medium p-0 h-auto"
+                >
                   CANCEL
                 </Button>
               </DialogClose>
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 className="text-blue-600 hover:text-blue-700 font-medium p-0 h-auto"
                 onClick={() => setIsSectionDialogOpen(false)}
               >
