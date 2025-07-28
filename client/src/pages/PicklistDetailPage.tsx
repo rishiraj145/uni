@@ -213,7 +213,7 @@ export const PicklistDetailPage: React.FC = () => {
           open={isSectionDialogOpen}
           onOpenChange={setIsSectionDialogOpen}
         >
-          <DialogContent className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-[412px] max-w-[90vw] top-auto rounded-t-2xl border-0 p-0 m-0 data-[state=open]:slide-in-from-bottom data-[state=closed]:slide-out-to-bottom bg-white shadow-xl [&>button]:hidden">
+          <DialogContent className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-[412px] max-w-[90vw] rounded-t-2xl border-0 p-0 m-0 translate-y-0 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom bg-white shadow-xl [&>button]:hidden">
             <DialogHeader className="sr-only">
               <DialogTitle>Select Section</DialogTitle>
               <DialogDescription>
