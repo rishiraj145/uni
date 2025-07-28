@@ -24,14 +24,14 @@ export const SideNavigation: React.FC<SideNavigationProps> = ({
       {/* Backdrop overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-30 z-40 transition-opacity duration-300"
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-300"
           onClick={onClose}
         />
       )}
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 h-full w-[280px] bg-white shadow-2xl transform transition-transform duration-300 ease-in-out z-50 ${
+        className={`fixed top-0 h-full w-[320px] bg-white shadow-xl transform transition-transform duration-300 ease-in-out z-50 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
         style={{
@@ -39,38 +39,36 @@ export const SideNavigation: React.FC<SideNavigationProps> = ({
         }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <Package className="w-4 h-4 text-white" />
-            </div>
-            <h2 className="text-lg font-semibold text-gray-900 font-['Roboto',sans-serif]">
+        <div className="flex items-center justify-between px-6 py-6 bg-gray-50 border-b border-gray-200">
+          <div className="flex flex-col">
+            <h2 className="text-xl font-semibold text-gray-900 font-['Roboto',sans-serif]">
               Menu
             </h2>
+            <p className="text-sm text-gray-500 mt-1">HHD Mobile</p>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors"
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-white hover:bg-gray-100 transition-colors shadow-sm"
           >
-            <X className="w-5 h-5 text-gray-500" />
+            <X className="w-5 h-5 text-gray-600" />
           </button>
         </div>
 
         {/* Navigation items */}
-        <nav className="flex-1 py-2">
+        <nav className="flex-1 py-4">
           {navigationItems.map((item, index) => (
             <button
               key={index}
-              className="w-full flex items-center gap-4 px-6 py-4 text-left hover:bg-gray-50 transition-colors duration-150 group"
+              className="w-full flex items-center gap-4 px-6 py-4 text-left hover:bg-blue-50 hover:border-r-4 hover:border-r-blue-500 transition-all duration-200 group"
               onClick={() => {
                 console.log(`Navigate to ${item.href}`);
                 onClose();
               }}
             >
-              <div className="w-6 h-6 flex items-center justify-center">
+              <div className="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100 group-hover:bg-blue-100 transition-colors">
                 <item.icon className="w-5 h-5 text-gray-600 group-hover:text-blue-600 transition-colors" />
               </div>
-              <span className="text-gray-900 font-medium font-['Roboto',sans-serif] group-hover:text-blue-600 transition-colors">
+              <span className="text-gray-800 font-medium font-['Roboto',sans-serif] group-hover:text-blue-700 transition-colors">
                 {item.label}
               </span>
             </button>
@@ -78,18 +76,18 @@ export const SideNavigation: React.FC<SideNavigationProps> = ({
         </nav>
 
         {/* Footer - Logout */}
-        <div className="border-t border-gray-100 p-2">
+        <div className="border-t border-gray-200 bg-gray-50">
           <button
-            className="w-full flex items-center gap-4 px-6 py-4 text-left hover:bg-red-50 transition-colors duration-150 group"
+            className="w-full flex items-center gap-4 px-6 py-4 text-left hover:bg-red-50 hover:border-r-4 hover:border-r-red-500 transition-all duration-200 group"
             onClick={() => {
               console.log("Logout");
               onClose();
             }}
           >
-            <div className="w-6 h-6 flex items-center justify-center">
+            <div className="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100 group-hover:bg-red-100 transition-colors">
               <LogOut className="w-5 h-5 text-gray-600 group-hover:text-red-600 transition-colors" />
             </div>
-            <span className="text-gray-900 font-medium font-['Roboto',sans-serif] group-hover:text-red-600 transition-colors">
+            <span className="text-gray-800 font-medium font-['Roboto',sans-serif] group-hover:text-red-700 transition-colors">
               Logout
             </span>
           </button>
