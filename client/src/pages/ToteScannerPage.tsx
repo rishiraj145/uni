@@ -60,7 +60,6 @@ export const ToteScannerPage: React.FC = () => {
 
   const handleToteIconClick = () => {
     console.log("Tote icon clicked - Scanner action");
-    // Simulate barcode scan result for demo
     const mockBarcodeData = "SHELF_001_12345";
     setScannedData(mockBarcodeData);
     console.log("Scanned data:", mockBarcodeData);
@@ -93,9 +92,9 @@ export const ToteScannerPage: React.FC = () => {
         </header>
 
         {/* Content */}
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-[60%]">
           {/* Scan SHELF Section - Camera View */}
-          <div className="bg-black flex flex-col items-center justify-center relative flex-1">
+          <div className="bg-red-700 flex flex-col items-center justify-center relative flex-1 rounded-xl">
             {/* Scan SHELF Title */}
             <div className="absolute top-6 left-0 right-0 flex items-center justify-center">
               <h2 className="text-white text-lg font-medium">Scan SHELF</h2>
@@ -103,7 +102,6 @@ export const ToteScannerPage: React.FC = () => {
                 className="absolute right-6 w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center hover:bg-gray-500 transition-colors"
                 onClick={handleToteIconClick}
               >
-                <Trash2 className="h-5 w-5 text-white" />
               </button>
             </div>
 
