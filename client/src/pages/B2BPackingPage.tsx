@@ -7,11 +7,11 @@ import { Input } from "@/components/ui/input";
 import { useLocation } from "wouter";
 import { SideNavigation } from "@/components/SideNavigation";
 
-interface SKUItem {
+interface PicklistItem {
   id: string;
-  title: string;
-  quantity: number;
-  pending: number;
+  picklistCode: string;
+  pendingQuantity: number;
+  pendingSection: number;
   channel: string;
   customer: string;
 }
@@ -22,13 +22,13 @@ export const B2BPackingPage: React.FC = () => {
   const [picklistCode, setPicklistCode] = useState("");
   const [isSideNavOpen, setIsSideNavOpen] = useState(false);
 
-  // Sample SKU data
-  const skuItems: SKUItem[] = [
-    { id: "1", title: "Wireless Headphones Premium", quantity: 25, pending: 5, channel: "Online", customer: "TechCorp Ltd" },
-    { id: "2", title: "USB-C Cable Set", quantity: 50, pending: 12, channel: "Retail", customer: "ElectroMax" },
-    { id: "3", title: "Laptop Stand Adjustable", quantity: 15, pending: 3, channel: "Online", customer: "OfficeSupply Co" },
-    { id: "4", title: "Bluetooth Mouse", quantity: 30, pending: 8, channel: "B2B", customer: "Corporate Solutions" },
-    { id: "5", title: "Phone Case Premium", quantity: 40, pending: 15, channel: "Retail", customer: "Mobile World" },
+  // Sample picklist data
+  const picklistItems: PicklistItem[] = [
+    { id: "1", picklistCode: "PL001-WH", pendingQuantity: 25, pendingSection: 5, channel: "Online", customer: "TechCorp Ltd" },
+    { id: "2", picklistCode: "PL002-USB", pendingQuantity: 50, pendingSection: 12, channel: "Retail", customer: "ElectroMax" },
+    { id: "3", picklistCode: "PL003-LS", pendingQuantity: 15, pendingSection: 3, channel: "Online", customer: "OfficeSupply Co" },
+    { id: "4", picklistCode: "PL004-BM", pendingQuantity: 30, pendingSection: 8, channel: "B2B", customer: "Corporate Solutions" },
+    { id: "5", picklistCode: "PL005-PC", pendingQuantity: 40, pendingSection: 15, channel: "Retail", customer: "Mobile World" },
   ];
 
   const handleMenuClick = () => {
@@ -120,36 +120,39 @@ export const B2BPackingPage: React.FC = () => {
           </div>
         </div>
 
-        {/* SKU Items List */}
+        {/* Picklist Items List */}
         <div className="absolute top-[120px] left-0 right-0 bottom-0 overflow-y-auto">
           <div className="p-4 space-y-3">
-            {skuItems.map((item) => (
+            {picklistItems.map((item) => (
               <Card key={item.id} className="border border-greysbordere-0e-0e-0">
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between">
-                    {/* Left Side - Title and quantities */}
+                    {/* Left Side - Picklist Code and Pending Info */}
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-medium text-text-elementsprimary font-['Roboto',Helvetica] mb-2">
-                        {item.title}
+                      {/* Picklist Code Title */}
+                      <h3 className="font-medium text-text-elementsprimary font-['Roboto',Helvetica] mb-2 text-left">
+                        {item.picklistCode}
                       </h3>
-                      <div className="flex gap-4">
-                        <div className="text-sm">
-                          <span className="text-text-elementssecondary">Quantity: </span>
-                          <span className="text-text-elementsprimary font-medium">{item.quantity}</span>
+                      
+                      {/* Vertical Flex for Pending Information */}
+                      <div className="flex flex-col gap-1">
+                        <div className="text-sm opacity-80">
+                          <span className="text-text-elementssecondary">Pending Quantity: </span>
+                          <span className="text-text-elementsprimary font-medium">{item.pendingQuantity}</span>
                         </div>
-                        <div className="text-sm">
-                          <span className="text-text-elementssecondary">Pending: </span>
-                          <span className="text-text-elementsprimary font-medium">{item.pending}</span>
+                        <div className="text-sm opacity-80">
+                          <span className="text-text-elementssecondary">Pending Section: </span>
+                          <span className="text-text-elementsprimary font-medium">{item.pendingSection}</span>
                         </div>
                       </div>
                     </div>
 
-                    {/* Right Side - Channel and Customer */}
-                    <div className="flex flex-col items-end text-right ml-4">
-                      <div className="text-sm text-text-elementsprimary font-medium mb-1">
+                    {/* Right Side - Channel and Customer in Vertical Flex */}
+                    <div className="flex flex-col items-end text-right ml-4 gap-1">
+                      <div className="text-sm text-text-elementsprimary font-medium">
                         {item.channel}
                       </div>
-                      <div className="text-xs text-text-elementssecondary">
+                      <div className="text-sm text-text-elementsprimary font-medium">
                         {item.customer}
                       </div>
                     </div>
