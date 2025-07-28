@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ArrowLeft, MoreVertical } from "lucide-react";
+import { ArrowLeft, MoreVertical, MenuIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -11,6 +11,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { useLocation, useParams } from "wouter";
+import { SideNavigation } from "@/components/SideNavigation";
 
 interface ShelfItem {
   id: string;
@@ -33,6 +34,7 @@ export const PicklistDetailPage: React.FC = () => {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [isSectionDialogOpen, setIsSectionDialogOpen] = useState(false);
   const [selectedSection, setSelectedSection] = useState<string>("Section A");
+  const [isSideNavOpen, setIsSideNavOpen] = useState(false);
 
   // Sample shelf data
   const pendingShelves: ShelfItem[] = [
@@ -89,12 +91,27 @@ export const PicklistDetailPage: React.FC = () => {
     setIsSectionDialogOpen(false);
   };
 
+  const handleMenuClick = () => {
+    setIsSideNavOpen(true);
+  };
+
+  const handleCloseSideNav = () => {
+    setIsSideNavOpen(false);
+  };
+
   return (
-    <div className="bg-white flex flex-row justify-center w-full min-h-screen">
-      <div className="bg-white w-[412px] min-h-screen relative">
+    <div className="bg-white min-h-screen w-full">
+      <SideNavigation isOpen={isSideNavOpen} onClose={handleCloseSideNav} />
+      <div className="bg-white w-full max-w-md mx-auto min-h-screen relative">
         {/* Header */}
         <header className="flex h-12 items-center justify-between w-full bg-white border-b border-[#e0e0e0] px-4">
           <div className="flex items-center gap-3">
+            <button
+              className="flex items-center justify-center w-8 h-8 hover:bg-gray-100 rounded transition-colors duration-200"
+              onClick={handleMenuClick}
+            >
+              <MenuIcon className="h-5 w-5 text-text-elementsprimary" />
+            </button>
             <button
               className="flex items-center justify-center w-8 h-8 hover:bg-gray-100 rounded transition-colors duration-200"
               onClick={handleBack}

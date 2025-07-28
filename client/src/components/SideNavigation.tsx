@@ -28,12 +28,9 @@ export const SideNavigation: React.FC<SideNavigationProps> = ({
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 h-full w-[375px] bg-white shadow-xl transform transition-transform duration-300 ease-in-out z-50 ${
+        className={`fixed top-0 left-0 h-full w-80 max-w-[90vw] bg-white shadow-xl transform transition-transform duration-300 ease-in-out z-50 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
-        style={{
-          left: `calc(50% - 206px)`, // 50% - (412px/2) = center of main container
-        }}
       >
         {/* Dark Header with user info */}
         <div className="bg-gray-800 px-4 py-4">

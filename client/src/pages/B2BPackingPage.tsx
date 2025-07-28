@@ -52,11 +52,11 @@ export const B2BPackingPage: React.FC = () => {
   };
 
   return (
-    <div className="bg-white flex flex-row justify-center w-full min-h-screen">
+    <div className="bg-white min-h-screen w-full">
       <SideNavigation isOpen={isSideNavOpen} onClose={handleCloseSideNav} />
-      <div className="bg-white-100 w-[412px] min-h-screen relative">
+      <div className="bg-white-100 w-full max-w-md mx-auto min-h-screen relative">
         {/* Header - Same as landing page */}
-        <header className="flex flex-col w-[412px] items-start gap-4 absolute top-0 left-0 bg-transparent">
+        <header className="flex flex-col w-full items-start gap-4 sticky top-0 bg-transparent z-10">
           <div className="flex h-12 items-center relative self-stretch w-full bg-white-100 border-b [border-bottom-style:solid] border-[#e0e0e0]">
             <button 
               className="relative w-12 h-12 flex items-center justify-center hover:bg-gray-100 transition-colors duration-200"

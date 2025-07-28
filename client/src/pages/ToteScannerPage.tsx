@@ -72,8 +72,8 @@ export const ToteScannerPage: React.FC = () => {
   };
 
   return (
-    <div className="bg-white flex flex-row justify-center w-full min-h-screen">
-      <div className="bg-white w-[412px] min-h-screen relative">
+    <div className="bg-white min-h-screen w-full">
+      <div className="bg-white w-full max-w-md mx-auto min-h-screen relative">
         {/* Header */}
         <header className="flex h-12 items-center justify-between w-full bg-white border-b border-[#e0e0e0] px-4">
           <div className="flex items-center gap-3">
