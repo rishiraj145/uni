@@ -1,5 +1,5 @@
 import React from "react";
-import { X, Home, Package, Truck, Settings, User, LogOut } from "lucide-react";
+import { X, Package, Truck, ChevronDown } from "lucide-react";
 
 interface SideNavigationProps {
   isOpen: boolean;
@@ -10,13 +10,10 @@ export const SideNavigation: React.FC<SideNavigationProps> = ({
   isOpen,
   onClose,
 }) => {
-  // Navigation menu items
+  // Navigation menu items matching the design
   const navigationItems = [
-    { icon: Home, label: "Dashboard", href: "/" },
-    { icon: Package, label: "B2B Picking", href: "/b2b-picking" },
-    { icon: Truck, label: "B2C Picking", href: "/b2c-picking" },
-    { icon: Settings, label: "Settings", href: "/settings" },
-    { icon: User, label: "Profile", href: "/profile" },
+    { label: "Picking", href: "/b2b-packing", isActive: true },
+    { label: "Cycle Count", href: "/cycle-count", isComingSoon: true },
   ];
 
   return (
@@ -31,66 +28,82 @@ export const SideNavigation: React.FC<SideNavigationProps> = ({
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 h-full w-[320px] bg-white shadow-xl transform transition-transform duration-300 ease-in-out z-50 ${
+        className={`fixed top-0 h-full w-[375px] bg-white shadow-xl transform transition-transform duration-300 ease-in-out z-50 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
         style={{
           left: `calc(50% - 206px)`, // 50% - (412px/2) = center of main container
         }}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-6 bg-gray-50 border-b border-gray-200">
-          <div className="flex flex-col">
-            <h2 className="text-xl font-semibold text-gray-900 font-['Roboto',sans-serif]">
-              Menu
-            </h2>
-            <p className="text-sm text-gray-500 mt-1">HHD Mobile</p>
+        {/* Dark Header with user info */}
+        <div className="bg-gray-800 px-4 py-4">
+          {/* Top row with logo placeholder and close button */}
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              {/* Logo placeholder - keeping blank as requested */}
+              <div className="w-8 h-8 bg-transparent"></div>
+            </div>
+            <button
+              onClick={onClose}
+              className="w-8 h-8 flex items-center justify-center text-white hover:bg-gray-700 rounded transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
-          <button
-            onClick={onClose}
-            className="w-10 h-10 flex items-center justify-center rounded-full bg-white hover:bg-gray-100 transition-colors shadow-sm"
-          >
-            <X className="w-5 h-5 text-gray-600" />
-          </button>
+          
+          {/* User info row */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-6 h-6 rounded-full bg-gray-600 flex items-center justify-center">
+                <div className="w-4 h-4 rounded-full bg-gray-400"></div>
+              </div>
+              <span className="text-white text-sm">johnwick@unicommerce.com</span>
+            </div>
+            <ChevronDown className="w-4 h-4 text-white" />
+          </div>
         </div>
 
         {/* Navigation items */}
-        <nav className="flex-1 py-4">
+        <nav className="flex-1 bg-gray-50">
           {navigationItems.map((item, index) => (
             <button
               key={index}
-              className="w-full flex items-center gap-4 px-6 py-4 text-left hover:bg-blue-50 hover:border-r-4 hover:border-r-blue-500 transition-all duration-200 group"
+              className={`w-full flex items-center justify-between px-6 py-4 text-left hover:bg-gray-100 transition-colors ${
+                item.isActive ? 'bg-white border-l-4 border-l-blue-500' : ''
+              }`}
               onClick={() => {
                 console.log(`Navigate to ${item.href}`);
                 onClose();
               }}
             >
-              <div className="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100 group-hover:bg-blue-100 transition-colors">
-                <item.icon className="w-5 h-5 text-gray-600 group-hover:text-blue-600 transition-colors" />
+              <div className="flex items-center gap-3">
+                <div className="w-5 h-5 flex items-center justify-center">
+                  {item.label === "Picking" && <Package className="w-4 h-4 text-gray-600" />}
+                  {item.label === "Cycle Count" && <Truck className="w-4 h-4 text-gray-600" />}
+                </div>
+                <span className="text-gray-800 font-medium">
+                  {item.label}
+                </span>
               </div>
-              <span className="text-gray-800 font-medium font-['Roboto',sans-serif] group-hover:text-blue-700 transition-colors">
-                {item.label}
-              </span>
+              
+              {item.isComingSoon && (
+                <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded-full font-medium">
+                  COMING SOON!
+                </span>
+              )}
             </button>
           ))}
         </nav>
 
-        {/* Footer - Logout */}
-        <div className="border-t border-gray-200 bg-gray-50">
-          <button
-            className="w-full flex items-center gap-4 px-6 py-4 text-left hover:bg-red-50 hover:border-r-4 hover:border-r-red-500 transition-all duration-200 group"
-            onClick={() => {
-              console.log("Logout");
-              onClose();
-            }}
-          >
-            <div className="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100 group-hover:bg-red-100 transition-colors">
-              <LogOut className="w-5 h-5 text-gray-600 group-hover:text-red-600 transition-colors" />
+        {/* Footer */}
+        <div className="absolute bottom-0 left-0 right-0 bg-gray-800 px-4 py-3">
+          <div className="flex items-center gap-3 text-white">
+            <div className="w-5 h-5 flex items-center justify-center">
+              <div className="w-4 h-4 bg-gray-600 rounded"></div>
             </div>
-            <span className="text-gray-800 font-medium font-['Roboto',sans-serif] group-hover:text-red-700 transition-colors">
-              Logout
-            </span>
-          </button>
+            <span className="text-sm">Facility_name</span>
+            <ChevronDown className="w-4 h-4 ml-auto" />
+          </div>
         </div>
       </div>
     </>
