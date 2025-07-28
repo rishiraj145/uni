@@ -80,8 +80,8 @@ export const ToteScannerPage: React.FC = () => {
 
         {/* Content */}
         <div className="flex flex-col">
-          {/* Scan SHELF Section - Top Part */}
-          <div className="bg-gray-800 flex flex-col items-center justify-center relative py-8">
+          {/* Scan SHELF Section - Camera View */}
+          <div className="bg-black flex flex-col items-center justify-center relative h-64">
             {/* Scan SHELF Title */}
             <div className="absolute top-6 left-0 right-0 flex items-center justify-center">
               <h2 className="text-white text-lg font-medium">Scan SHELF</h2>
@@ -93,46 +93,25 @@ export const ToteScannerPage: React.FC = () => {
               </button>
             </div>
 
-            {/* Shelf Barcode */}
-            <div className="bg-red-500 rounded-xl p-4 mx-6 shadow-lg w-80">
-              {/* Barcode Section */}
-              <div className="bg-white rounded-lg p-4">
-                {/* Barcode Lines */}
-                <div className="flex justify-center mb-3">
-                  <div className="flex gap-px">
-                    {Array.from({ length: 45 }, (_, i) => (
-                      <div
-                        key={i}
-                        className={`bg-black ${
-                          Math.random() > 0.5 ? 'w-0.5' : 'w-px'
-                        } h-12`}
-                      />
-                    ))}
-                  </div>
+            {/* Camera Viewfinder */}
+            <div className="relative flex items-center justify-center">
+              {/* Scanning Frame */}
+              <div className="relative w-64 h-32 border-2 border-white border-opacity-50 rounded-lg">
+                {/* Corner brackets */}
+                <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-white"></div>
+                <div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-white"></div>
+                <div className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-white"></div>
+                <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-white"></div>
+                
+                {/* Scanning line animation */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-full h-0.5 bg-red-500 animate-pulse"></div>
                 </div>
                 
-                {/* Shelf Information */}
-                <div className="flex items-center justify-between bg-white border-t-2 border-black pt-2">
-                  <div className="flex items-center gap-2">
-                    <div className="text-2xl font-bold">↓</div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold">15</div>
-                      <div className="text-xs text-gray-600">AISLE</div>
-                    </div>
-                  </div>
-                  
-                  <div className="text-center">
-                    <div className="text-2xl font-bold">006</div>
-                    <div className="text-xs text-gray-600">SECTION</div>
-                  </div>
-                  
-                  <div className="text-center">
-                    <div className="text-2xl font-bold">A</div>
-                    <div className="text-xs text-gray-600">LEVEL</div>
-                  </div>
-                  
-                  <div className="flex items-center gap-2">
-                    <div className="text-2xl font-bold">↓</div>
+                {/* Center instruction */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="text-white text-sm text-center bg-black bg-opacity-50 px-3 py-1 rounded">
+                    Position barcode here
                   </div>
                 </div>
               </div>
