@@ -68,6 +68,9 @@ This is a mobile-first picking application migrated from Figma to Replit. The ap
 - **2025-01-29**: Added comprehensive product details in bulk pick modal (batch, dates, costs)
 - **2025-01-29**: Enhanced alert system with confirmation dialog for completed shelf picking
 - **2025-01-29**: Implemented automatic navigation back to shelf detail after completing all items
+- **2025-01-29**: Added "Picklists" navigation item to sidebar menu with proper routing
+- **2025-01-29**: Enhanced sidebar navigation with functional routing using wouter
+- **2025-01-29**: Organized navigation structure: Picking → Landing, Picklists → B2B Packing page
 
 ## User Preferences
 - Mobile-first design approach

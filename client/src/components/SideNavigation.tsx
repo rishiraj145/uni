@@ -1,5 +1,6 @@
 import React from "react";
-import { X, Package, Truck, ChevronDown } from "lucide-react";
+import { X, Package, Truck, ChevronDown, List } from "lucide-react";
+import { useLocation } from "wouter";
 
 interface SideNavigationProps {
   isOpen: boolean;
@@ -10,9 +11,12 @@ export const SideNavigation: React.FC<SideNavigationProps> = ({
   isOpen,
   onClose,
 }) => {
+  const [, navigate] = useLocation();
+  
   // Navigation menu items matching the design
   const navigationItems = [
-    { label: "Picking", href: "/b2b-packing", isActive: true },
+    { label: "Picking", href: "/", isActive: false },
+    { label: "Picklists", href: "/b2b-packing", isActive: true },
     { label: "Cycle Count", href: "/cycle-count", isComingSoon: true },
   ];
 
@@ -69,13 +73,16 @@ export const SideNavigation: React.FC<SideNavigationProps> = ({
                 item.isActive ? 'bg-white border-l-4 border-l-blue-500' : ''
               }`}
               onClick={() => {
-                console.log(`Navigate to ${item.href}`);
+                if (!item.isComingSoon) {
+                  navigate(item.href);
+                }
                 onClose();
               }}
             >
               <div className="flex items-center gap-3">
                 <div className="w-5 h-5 flex items-center justify-center">
                   {item.label === "Picking" && <Package className="w-4 h-4 text-gray-600" />}
+                  {item.label === "Picklists" && <List className="w-4 h-4 text-gray-600" />}
                   {item.label === "Cycle Count" && <Truck className="w-4 h-4 text-gray-600" />}
                 </div>
                 <span className="text-gray-800 font-medium">
