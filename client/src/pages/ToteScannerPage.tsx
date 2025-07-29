@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import { ArrowLeft, Trash2 } from "lucide-react";
+import { ArrowLeft, Trash2, Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocation, useParams } from "wouter";
+import { CameraCapture } from "@/components/CameraCapture";
 
 export const ToteScannerPage: React.FC = () => {
   const params = useParams();
@@ -11,6 +12,8 @@ export const ToteScannerPage: React.FC = () => {
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
   const [scannedData, setScannedData] = useState<string>("");
   const [cameraError, setCameraError] = useState<string>("");
+  const [showCameraCapture, setShowCameraCapture] = useState(false);
+  const [capturedImages, setCapturedImages] = useState<string[]>([]);
 
   // Start camera when component mounts
   useEffect(() => {
@@ -59,8 +62,16 @@ export const ToteScannerPage: React.FC = () => {
   };
 
   const handleToteIconClick = () => {
-    console.log("Tote icon clicked - Scanner action");
-    const mockBarcodeData = "SHELF_001_12345";
+    setShowCameraCapture(true);
+  };
+
+  const handleCameraCapture = (imageData: string) => {
+    console.log("Tote photo captured");
+    setCapturedImages(prev => [...prev, imageData]);
+    setShowCameraCapture(false);
+    
+    // Mock barcode data for now
+    const mockBarcodeData = "TOTE_001_12345";
     setScannedData(mockBarcodeData);
     console.log("Scanned data:", mockBarcodeData);
     
@@ -69,6 +80,14 @@ export const ToteScannerPage: React.FC = () => {
       stopCamera();
       setLocation(`/shelf-detail/${picklistId}`);
     }, 1000);
+  };
+
+  const handleDeleteImage = (index: number) => {
+    setCapturedImages(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleAddImage = () => {
+    setShowCameraCapture(true);
   };
 
   return (
@@ -168,18 +187,67 @@ export const ToteScannerPage: React.FC = () => {
           </div>
 
           {/* Bottom Instruction */}
-          <div className="bg-white flex flex-col items-center justify-center py-8">
-            <p className="text-gray-700 text-lg font-medium mb-2">
+          <div className="bg-white flex flex-col items-center justify-center py-4">
+            <p className="text-gray-700 text-lg font-medium mb-4">
               Scan tote to continue picking
             </p>
             
-            {/* Manual Input for Testing */}
-            <button
-              onClick={handleToteIconClick}
-              className="text-sm text-blue-600 hover:text-blue-800 underline"
-            >
-              Simulate Scan (for testing)
-            </button>
+            {/* Captured Images */}
+            {capturedImages.length > 0 && (
+              <div className="mb-4 w-full max-w-sm">
+                <div className="bg-gray-50 p-3 rounded-lg">
+                  <div className="flex justify-between items-center mb-2">
+                    <h3 className="text-sm font-medium">Captured Images ({capturedImages.length})</h3>
+                  </div>
+                  <div className="flex gap-2 overflow-x-auto">
+                    {capturedImages.map((image, index) => (
+                      <div key={index} className="relative flex-shrink-0">
+                        <img 
+                          src={image} 
+                          alt={`Captured ${index + 1}`}
+                          className="w-16 h-16 object-cover rounded border"
+                        />
+                        <button
+                          onClick={() => handleDeleteImage(index)}
+                          className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Action Buttons */}
+            <div className="flex gap-3 w-full max-w-sm">
+              <Button
+                onClick={() => handleDeleteImage(capturedImages.length - 1)}
+                disabled={capturedImages.length === 0}
+                className="flex-1 bg-red-500 hover:bg-red-600 text-white disabled:opacity-50"
+                size="sm"
+              >
+                <Trash2 className="w-4 h-4 mr-1" />
+                Delete
+              </Button>
+              <Button
+                onClick={handleAddImage}
+                className="flex-1 bg-blue-500 hover:bg-blue-600 text-white"
+                size="sm"
+              >
+                <Camera className="w-4 h-4 mr-1" />
+                Add
+              </Button>
+              <Button
+                onClick={handleToteIconClick}
+                className="flex-1 bg-green-500 hover:bg-green-600 text-white"
+                size="sm"
+              >
+                <Camera className="w-4 h-4 mr-1" />
+                Click
+              </Button>
+            </div>
             
             {scannedData && (
               <div className="mt-3 text-sm text-green-600">
@@ -189,6 +257,13 @@ export const ToteScannerPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Camera Capture Modal */}
+      <CameraCapture
+        isActive={showCameraCapture}
+        onCapture={handleCameraCapture}
+        onClose={() => setShowCameraCapture(false)}
+      />
     </div>
   );
 };

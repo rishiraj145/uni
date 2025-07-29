@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
-import { ArrowLeft, X, Trash2 } from "lucide-react";
+import { ArrowLeft, X, Trash2, Camera } from "lucide-react";
+import { CameraCapture } from "@/components/CameraCapture";
+import { Button } from "@/components/ui/button";
 
 interface Product {
   id: string;
@@ -77,6 +79,8 @@ export function SKUScannerPage() {
   const [showShelfEmptyAlert, setShowShelfEmptyAlert] = useState(false);
   const [bulkQuantity, setBulkQuantity] = useState(1);
   const [inventoryType, setInventoryType] = useState("Good");
+  const [showCameraCapture, setShowCameraCapture] = useState(false);
+  const [capturedImages, setCapturedImages] = useState<string[]>([]);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
   const [cameraError, setCameraError] = useState<string>("");
@@ -212,6 +216,24 @@ export function SKUScannerPage() {
       p.id === selectedProduct.id ? { ...p, isPicking: false } : p
     ));
     setShowActionsModal(false);
+  };
+
+  const handleCameraCapture = (imageData: string) => {
+    console.log("SKU photo captured");
+    setCapturedImages(prev => [...prev, imageData]);
+    setShowCameraCapture(false);
+  };
+
+  const handleDeleteImage = (index: number) => {
+    setCapturedImages(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleAddImage = () => {
+    setShowCameraCapture(true);
+  };
+
+  const handleClickCapture = () => {
+    setShowCameraCapture(true);
   };
 
 
@@ -400,6 +422,63 @@ export function SKUScannerPage() {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-medium">Scan SKU Code</h2>
           <Trash2 className="w-5 h-5 text-gray-400" />
+        </div>
+
+        {/* Captured Images */}
+        {capturedImages.length > 0 && (
+          <div className="mb-4">
+            <div className="bg-gray-800 p-3 rounded-lg">
+              <div className="flex justify-between items-center mb-2">
+                <h3 className="text-sm font-medium text-white">Captured Images ({capturedImages.length})</h3>
+              </div>
+              <div className="flex gap-2 overflow-x-auto">
+                {capturedImages.map((image, index) => (
+                  <div key={index} className="relative flex-shrink-0">
+                    <img 
+                      src={image} 
+                      alt={`Captured ${index + 1}`}
+                      className="w-16 h-16 object-cover rounded border"
+                    />
+                    <button
+                      onClick={() => handleDeleteImage(index)}
+                      className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Action Buttons */}
+        <div className="flex gap-2 mb-4">
+          <Button
+            onClick={() => handleDeleteImage(capturedImages.length - 1)}
+            disabled={capturedImages.length === 0}
+            className="flex-1 bg-red-500 hover:bg-red-600 text-white disabled:opacity-50"
+            size="sm"
+          >
+            <Trash2 className="w-4 h-4 mr-1" />
+            Delete
+          </Button>
+          <Button
+            onClick={handleAddImage}
+            className="flex-1 bg-blue-500 hover:bg-blue-600 text-white"
+            size="sm"
+          >
+            <Camera className="w-4 h-4 mr-1" />
+            Add
+          </Button>
+          <Button
+            onClick={handleClickCapture}
+            className="flex-1 bg-green-500 hover:bg-green-600 text-white"
+            size="sm"
+          >
+            <Camera className="w-4 h-4 mr-1" />
+            Click
+          </Button>
         </div>
         
         {/* Live Camera Scanner */}
@@ -665,6 +744,12 @@ export function SKUScannerPage() {
         </div>
       )}
 
+      {/* Camera Capture Modal */}
+      <CameraCapture
+        isActive={showCameraCapture}
+        onCapture={handleCameraCapture}
+        onClose={() => setShowCameraCapture(false)}
+      />
 
     </div>
   );

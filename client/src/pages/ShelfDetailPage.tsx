@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
-import { ArrowLeft, Trash2 } from "lucide-react";
+import { ArrowLeft, Trash2, Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocation, useParams } from "wouter";
+import { CameraCapture } from "@/components/CameraCapture";
 
 // Mock shelf data based on scanned barcode
 const mockShelfData = {
@@ -31,6 +32,8 @@ export const ShelfDetailPage: React.FC = () => {
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
   const [cameraError, setCameraError] = useState<string>("");
   const [showBarcodeData, setShowBarcodeData] = useState(false);
+  const [showCameraCapture, setShowCameraCapture] = useState(false);
+  const [capturedImages, setCapturedImages] = useState<string[]>([]);
 
   // Start camera when component mounts
   useEffect(() => {
@@ -79,12 +82,26 @@ export const ShelfDetailPage: React.FC = () => {
   };
 
   const handleScanShelf = () => {
-    console.log("Shelf scan clicked - showing barcode data");
+    setShowCameraCapture(true);
+  };
+
+  const handleCameraCapture = (imageData: string) => {
+    console.log("Shelf photo captured");
+    setCapturedImages(prev => [...prev, imageData]);
+    setShowCameraCapture(false);
     setShowBarcodeData(true);
-    // Simulate shelf scan success
-    setTimeout(() => {
-      setShowBarcodeData(true);
-    }, 500);
+  };
+
+  const handleDeleteImage = (index: number) => {
+    setCapturedImages(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleAddImage = () => {
+    setShowCameraCapture(true);
+  };
+
+  const handleClickCapture = () => {
+    setShowCameraCapture(true);
   };
 
   // Navigation to SKU scanner
@@ -256,6 +273,65 @@ export const ShelfDetailPage: React.FC = () => {
           </button>
         </div>
 
+        {/* Captured Images */}
+        {capturedImages.length > 0 && (
+          <div className="bg-white p-4 border-b border-gray-200">
+            <div className="bg-gray-50 p-3 rounded-lg">
+              <div className="flex justify-between items-center mb-2">
+                <h3 className="text-sm font-medium">Captured Images ({capturedImages.length})</h3>
+              </div>
+              <div className="flex gap-2 overflow-x-auto">
+                {capturedImages.map((image, index) => (
+                  <div key={index} className="relative flex-shrink-0">
+                    <img 
+                      src={image} 
+                      alt={`Captured ${index + 1}`}
+                      className="w-16 h-16 object-cover rounded border"
+                    />
+                    <button
+                      onClick={() => handleDeleteImage(index)}
+                      className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Action Buttons */}
+        <div className="bg-white p-4 border-b border-gray-200">
+          <div className="flex gap-3">
+            <Button
+              onClick={() => handleDeleteImage(capturedImages.length - 1)}
+              disabled={capturedImages.length === 0}
+              className="flex-1 bg-red-500 hover:bg-red-600 text-white disabled:opacity-50"
+              size="sm"
+            >
+              <Trash2 className="w-4 h-4 mr-1" />
+              Delete
+            </Button>
+            <Button
+              onClick={handleAddImage}
+              className="flex-1 bg-blue-500 hover:bg-blue-600 text-white"
+              size="sm"
+            >
+              <Camera className="w-4 h-4 mr-1" />
+              Add
+            </Button>
+            <Button
+              onClick={handleClickCapture}
+              className="flex-1 bg-green-500 hover:bg-green-600 text-white"
+              size="sm"
+            >
+              <Camera className="w-4 h-4 mr-1" />
+              Click
+            </Button>
+          </div>
+        </div>
+
         {/* Shelf List */}
         <div className="flex-1 overflow-y-auto">
           {sortedShelves.map((shelf, index) => (
@@ -293,6 +369,13 @@ export const ShelfDetailPage: React.FC = () => {
             </button>
           </div>
         )}
+
+        {/* Camera Capture Modal */}
+        <CameraCapture
+          isActive={showCameraCapture}
+          onCapture={handleCameraCapture}
+          onClose={() => setShowCameraCapture(false)}
+        />
       </div>
     </div>
   );
