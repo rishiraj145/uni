@@ -1,9 +1,10 @@
-import React, { useState } from "react";
-import { MenuIcon, Filter, ArrowUpDown } from "lucide-react";
+import React, { useState, useMemo } from "react";
+import { MenuIcon, Filter, ArrowUpDown, X, ChevronDown, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useLocation } from "wouter";
 import { SideNavigation } from "@/components/SideNavigation";
 
@@ -14,6 +15,20 @@ interface PicklistItem {
   pendingSection: number;
   channel: string;
   customer: string;
+  sku: string;
+  fulfillmentTAT: string;
+  order: string;
+  paymentMethod: string;
+}
+
+interface FilterState {
+  sku: string;
+  fulfillmentTAT: string;
+  order: string;
+  paymentMethod: string;
+  quantity: string;
+  customers: string;
+  channel: string;
 }
 
 export const B2BPackingPage: React.FC = () => {
@@ -21,14 +36,26 @@ export const B2BPackingPage: React.FC = () => {
   const [assignToMe, setAssignToMe] = useState(false);
   const [picklistCode, setPicklistCode] = useState("");
   const [isSideNavOpen, setIsSideNavOpen] = useState(false);
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [filters, setFilters] = useState<FilterState>({
+    sku: "",
+    fulfillmentTAT: "",
+    order: "",
+    paymentMethod: "",
+    quantity: "",
+    customers: "",
+    channel: ""
+  });
 
   // Sample picklist data
-  const picklistItems: PicklistItem[] = [
-    { id: "1", picklistCode: "PL001-WH", pendingQuantity: 25, pendingSection: 5, channel: "Online", customer: "TechCorp Ltd" },
-    { id: "2", picklistCode: "PL002-USB", pendingQuantity: 50, pendingSection: 12, channel: "Retail", customer: "ElectroMax" },
-    { id: "3", picklistCode: "PL003-LS", pendingQuantity: 15, pendingSection: 3, channel: "Online", customer: "OfficeSupply Co" },
-    { id: "4", picklistCode: "PL004-BM", pendingQuantity: 30, pendingSection: 8, channel: "B2B", customer: "Corporate Solutions" },
-    { id: "5", picklistCode: "PL005-PC", pendingQuantity: 40, pendingSection: 15, channel: "Retail", customer: "Mobile World" },
+  const allPicklistItems: PicklistItem[] = [
+    { id: "1", picklistCode: "PL001-WH", pendingQuantity: 25, pendingSection: 5, channel: "Online", customer: "TechCorp Ltd", sku: "SK001", fulfillmentTAT: "18/02/2023 - 18/02/2023", order: "ORD001", paymentMethod: "Credit Card" },
+    { id: "2", picklistCode: "PL002-USB", pendingQuantity: 50, pendingSection: 12, channel: "Retail", customer: "ElectroMax", sku: "SK002", fulfillmentTAT: "19/02/2023 - 19/02/2023", order: "ORD002", paymentMethod: "Cash" },
+    { id: "3", picklistCode: "PL003-LS", pendingQuantity: 15, pendingSection: 3, channel: "Online", customer: "OfficeSupply Co", sku: "SK003", fulfillmentTAT: "20/02/2023 - 20/02/2023", order: "ORD003", paymentMethod: "Debit Card" },
+    { id: "4", picklistCode: "PL004-BM", pendingQuantity: 30, pendingSection: 8, channel: "B2B", customer: "Corporate Solutions", sku: "SK004", fulfillmentTAT: "21/02/2023 - 21/02/2023", order: "ORD004", paymentMethod: "Bank Transfer" },
+    { id: "5", picklistCode: "PL005-PC", pendingQuantity: 40, pendingSection: 15, channel: "Retail", customer: "Mobile World", sku: "SK005", fulfillmentTAT: "22/02/2023 - 22/02/2023", order: "ORD005", paymentMethod: "Credit Card" },
+    { id: "6", picklistCode: "AL001-TEST", pendingQuantity: 35, pendingSection: 7, channel: "Online", customer: "Alpha Corp", sku: "SK006", fulfillmentTAT: "23/02/2023 - 23/02/2023", order: "ORD006", paymentMethod: "PayPal" },
   ];
 
   const handleMenuClick = () => {
@@ -44,12 +71,73 @@ export const B2BPackingPage: React.FC = () => {
   };
 
   const handleFilter = () => {
-    console.log("Filter clicked");
+    setIsFilterModalOpen(true);
   };
 
   const handleSort = () => {
-    console.log("A-Z Sort clicked");
+    setSortOrder(prev => prev === "asc" ? "desc" : "asc");
   };
+
+  const handleApplyFilters = () => {
+    setIsFilterModalOpen(false);
+  };
+
+  const handleClearAllFilters = () => {
+    setFilters({
+      sku: "",
+      fulfillmentTAT: "",
+      order: "",
+      paymentMethod: "",
+      quantity: "",
+      customers: "",
+      channel: ""
+    });
+  };
+
+  // Filter and sort logic
+  const filteredAndSortedItems = useMemo(() => {
+    let filtered = allPicklistItems;
+
+    // Filter by picklist code search
+    if (picklistCode.trim()) {
+      filtered = filtered.filter(item => 
+        item.picklistCode.toLowerCase().includes(picklistCode.toLowerCase())
+      );
+    }
+
+    // Apply filters
+    if (filters.sku) {
+      filtered = filtered.filter(item => 
+        item.sku.toLowerCase().includes(filters.sku.toLowerCase())
+      );
+    }
+    if (filters.channel) {
+      filtered = filtered.filter(item => 
+        item.channel.toLowerCase().includes(filters.channel.toLowerCase())
+      );
+    }
+    if (filters.customers) {
+      filtered = filtered.filter(item => 
+        item.customer.toLowerCase().includes(filters.customers.toLowerCase())
+      );
+    }
+    if (filters.paymentMethod) {
+      filtered = filtered.filter(item => 
+        item.paymentMethod.toLowerCase().includes(filters.paymentMethod.toLowerCase())
+      );
+    }
+    if (filters.order) {
+      filtered = filtered.filter(item => 
+        item.order.toLowerCase().includes(filters.order.toLowerCase())
+      );
+    }
+
+    // Sort items
+    return filtered.sort((a, b) => {
+      const comparison = a.picklistCode.localeCompare(b.picklistCode);
+      return sortOrder === "asc" ? comparison : -comparison;
+    });
+  }, [allPicklistItems, picklistCode, filters, sortOrder]);
 
   return (
     <div className="bg-white min-h-screen w-full">
@@ -115,7 +203,7 @@ export const B2BPackingPage: React.FC = () => {
               className="flex items-center gap-1 border-greysbordere-0e-0e-0"
             >
               <ArrowUpDown className="h-4 w-4" />
-              A-Z
+              {sortOrder === "asc" ? "A-Z" : "Z-A"}
             </Button>
           </div>
         </div>
@@ -124,7 +212,7 @@ export const B2BPackingPage: React.FC = () => {
         <div className="absolute top-[120px] left-0 right-0 bottom-0 overflow-y-auto">
           <div className="p-4">
             <div className="grid grid-cols-1 gap-4">
-              {picklistItems.map((item) => (
+              {filteredAndSortedItems.map((item) => (
                 <Card 
                   key={item.id} 
                   className="border border-greysbordere-0e-0e-0 cursor-pointer hover:shadow-md transition-shadow duration-200"
@@ -170,6 +258,159 @@ export const B2BPackingPage: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* Filter Modal */}
+        {isFilterModalOpen && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
+              {/* Header */}
+              <div className="flex justify-between items-center p-4 border-b border-gray-200">
+                <h2 className="text-lg font-semibold text-gray-900">FILTERS</h2>
+                <button 
+                  onClick={() => setIsFilterModalOpen(false)}
+                  className="p-1 hover:bg-gray-100 rounded"
+                >
+                  <X className="w-5 h-5 text-gray-600" />
+                </button>
+              </div>
+
+              {/* Filter Form */}
+              <div className="p-4 space-y-6">
+                {/* SKU */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">SKU</label>
+                  <Select value={filters.sku} onValueChange={(value) => setFilters(prev => ({...prev, sku: value}))}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="SK001, SK002, SK003" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="SK001">SK001</SelectItem>
+                      <SelectItem value="SK002">SK002</SelectItem>
+                      <SelectItem value="SK003">SK003</SelectItem>
+                      <SelectItem value="SK004">SK004</SelectItem>
+                      <SelectItem value="SK005">SK005</SelectItem>
+                      <SelectItem value="SK006">SK006</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Fulfilment TAT */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">Fulfilment TAT</label>
+                  <div className="relative">
+                    <Input
+                      value={filters.fulfillmentTAT}
+                      onChange={(e) => setFilters(prev => ({...prev, fulfillmentTAT: e.target.value}))}
+                      placeholder="18/02/2023 - 18/02/2023"
+                      className="pr-10"
+                    />
+                    <Calendar className="w-4 h-4 text-gray-400 absolute right-3 top-1/2 transform -translate-y-1/2" />
+                  </div>
+                </div>
+
+                {/* Order */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">Order</label>
+                  <Select value={filters.order} onValueChange={(value) => setFilters(prev => ({...prev, order: value}))}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Hint text" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ORD001">ORD001</SelectItem>
+                      <SelectItem value="ORD002">ORD002</SelectItem>
+                      <SelectItem value="ORD003">ORD003</SelectItem>
+                      <SelectItem value="ORD004">ORD004</SelectItem>
+                      <SelectItem value="ORD005">ORD005</SelectItem>
+                      <SelectItem value="ORD006">ORD006</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Payment Method */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">Payment Method</label>
+                  <Select value={filters.paymentMethod} onValueChange={(value) => setFilters(prev => ({...prev, paymentMethod: value}))}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Hint text" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Credit Card">Credit Card</SelectItem>
+                      <SelectItem value="Debit Card">Debit Card</SelectItem>
+                      <SelectItem value="Cash">Cash</SelectItem>
+                      <SelectItem value="Bank Transfer">Bank Transfer</SelectItem>
+                      <SelectItem value="PayPal">PayPal</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Quantity */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">Quantity</label>
+                  <Select value={filters.quantity} onValueChange={(value) => setFilters(prev => ({...prev, quantity: value}))}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Hint text" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="0-25">0-25</SelectItem>
+                      <SelectItem value="26-50">26-50</SelectItem>
+                      <SelectItem value="51-100">51-100</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Customers */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">Customers</label>
+                  <Select value={filters.customers} onValueChange={(value) => setFilters(prev => ({...prev, customers: value}))}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Hint Text" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="TechCorp Ltd">TechCorp Ltd</SelectItem>
+                      <SelectItem value="ElectroMax">ElectroMax</SelectItem>
+                      <SelectItem value="OfficeSupply Co">OfficeSupply Co</SelectItem>
+                      <SelectItem value="Corporate Solutions">Corporate Solutions</SelectItem>
+                      <SelectItem value="Mobile World">Mobile World</SelectItem>
+                      <SelectItem value="Alpha Corp">Alpha Corp</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Channel */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">Channel</label>
+                  <Select value={filters.channel} onValueChange={(value) => setFilters(prev => ({...prev, channel: value}))}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Hint Text" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Online">Online</SelectItem>
+                      <SelectItem value="Retail">Retail</SelectItem>
+                      <SelectItem value="B2B">B2B</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Footer Buttons */}
+              <div className="flex justify-between items-center p-4 border-t border-gray-200">
+                <Button
+                  variant="ghost"
+                  onClick={handleClearAllFilters}
+                  className="text-gray-600 hover:text-gray-800"
+                >
+                  CLEAR ALL
+                </Button>
+                <Button
+                  onClick={handleApplyFilters}
+                  className="bg-blue-500 hover:bg-blue-600 text-white px-6"
+                >
+                  APPLY
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
