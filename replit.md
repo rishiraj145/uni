@@ -56,6 +56,9 @@ This is a mobile-first picking application migrated from Figma to Replit. The ap
 - **2025-01-28**: Added mobile-friendly warehouse scanning UI with Pending/Scanned tabs
 - **2025-01-28**: Implemented realistic product cards with Nike shoe mockups in different colors
 - **2025-01-28**: Added navigation flow from shelf detail to SKU scanner for seamless picking workflow
+- **2025-01-29**: Fixed picking state bug - cards in picking mode no longer accept click events except for quantity button
+- **2025-01-29**: Implemented scanned item reversal - clicking scanned items moves one unit back to pending
+- **2025-01-29**: Enhanced UX with visual indicators for clickable scanned items
 
 ## User Preferences
 - Mobile-first design approach

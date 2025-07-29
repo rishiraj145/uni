@@ -88,11 +88,24 @@ export function SKUScannerPage() {
   const currentProducts = activeTab === "pending" ? pendingProducts : scannedProducts;
 
   const handleProductClick = (product: Product) => {
-    if (activeTab === "pending" && product.pickedQuantity < product.totalQuantity) {
+    if (activeTab === "pending" && product.pickedQuantity < product.totalQuantity && !product.isPicking) {
       setSelectedProduct(product);
       setProducts(prev => prev.map(p => 
         p.id === product.id ? { ...p, isPicking: true } : p
       ));
+    } else if (activeTab === "scanned" && product.pickedQuantity > 0) {
+      // Move item back to pending by reducing picked quantity by 1
+      setProducts(prev => prev.map(p => {
+        if (p.id === product.id) {
+          const newPickedQuantity = Math.max(p.pickedQuantity - 1, 0);
+          return { 
+            ...p, 
+            pickedQuantity: newPickedQuantity,
+            isPicking: false
+          };
+        }
+        return p;
+      }));
     }
   };
 
@@ -183,11 +196,13 @@ export function SKUScannerPage() {
     
     return (
       <div 
-        className={`bg-white rounded-lg border p-4 mb-3 cursor-pointer transition-all ${
+        className={`bg-white rounded-lg border p-4 mb-3 transition-all ${
           product.isPicking 
             ? 'border-green-500 border-2 bg-green-50' 
             : activeTab === 'pending' && pendingQty > 0
-            ? 'border-gray-200 hover:border-gray-300'
+            ? 'border-gray-200 hover:border-gray-300 cursor-pointer'
+            : activeTab === 'scanned' && product.pickedQuantity > 0
+            ? 'border-gray-200 hover:border-gray-300 cursor-pointer'
             : 'border-gray-200'
         }`}
         onClick={() => handleProductClick(product)}
@@ -250,6 +265,9 @@ export function SKUScannerPage() {
               <span className="font-medium">
                 {activeTab === 'pending' ? pendingQty : product.pickedQuantity}
               </span>
+              {activeTab === 'scanned' && (
+                <span className="text-xs text-blue-600 ml-1">(click to unpick)</span>
+              )}
             </div>
             <div className="text-right">
               <span className="text-gray-500">Vendor </span>
