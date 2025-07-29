@@ -72,6 +72,7 @@ export function SKUScannerPage() {
   const [activeTab, setActiveTab] = useState<"pending" | "scanned">("pending");
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [showBulkPickModal, setShowBulkPickModal] = useState(false);
+  const [showActionsModal, setShowActionsModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [showShelfEmptyAlert, setShowShelfEmptyAlert] = useState(false);
   const [bulkQuantity, setBulkQuantity] = useState(1);
@@ -177,13 +178,40 @@ export function SKUScannerPage() {
     }
   };
 
-  const handleQuantityClick = (product: Product) => {
-    if (product.isPicking) {
-      setSelectedProduct(product);
-      setBulkQuantity(1);
-      setInventoryType("Good");
-      setShowBulkPickModal(true);
-    }
+  const handleQuantityAction = (product: Product) => {
+    setSelectedProduct(product);
+    setShowActionsModal(true);
+  };
+
+  const handlePickInBulk = () => {
+    setShowActionsModal(false);
+    setBulkQuantity(1);
+    setInventoryType("Good");
+    setShowBulkPickModal(true);
+  };
+
+  const handleMarkDamaged = () => {
+    if (!selectedProduct) return;
+    setProducts(prev => prev.map(p => 
+      p.id === selectedProduct.id ? { ...p, status: "DAMAGED" as const, isPicking: false } : p
+    ));
+    setShowActionsModal(false);
+  };
+
+  const handleMarkNotFound = () => {
+    if (!selectedProduct) return;
+    setProducts(prev => prev.map(p => 
+      p.id === selectedProduct.id ? { ...p, isPicking: false } : p
+    ));
+    setShowActionsModal(false);
+  };
+
+  const handleShortPick = () => {
+    if (!selectedProduct) return;
+    setProducts(prev => prev.map(p => 
+      p.id === selectedProduct.id ? { ...p, isPicking: false } : p
+    ));
+    setShowActionsModal(false);
   };
 
 
@@ -267,15 +295,16 @@ export function SKUScannerPage() {
             </span>
           )}
           <div className="flex-1"></div>
-          {product.isPicking && (
+          {/* Always show quantity button for pending items */}
+          {activeTab === 'pending' && pendingQty > 0 && (
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                handleQuantityClick(product);
+                handleQuantityAction(product);
               }}
               className="bg-blue-500 text-white px-2 py-1 rounded text-sm font-medium hover:bg-blue-600"
             >
-              {product.pickedQuantity + 1}/{product.totalQuantity}
+              {pendingQty}
             </button>
           )}
         </div>
@@ -466,6 +495,50 @@ export function SKUScannerPage() {
           </div>
         )}
       </div>
+
+      {/* Actions Modal */}
+      {showActionsModal && selectedProduct && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-end z-50">
+          <div className="bg-white w-full rounded-t-lg animate-slide-up">
+            <div className="flex justify-between items-center p-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold">ACTIONS</h3>
+              <button 
+                onClick={() => setShowActionsModal(false)}
+                className="p-1"
+              >
+                <X className="w-5 h-5 text-gray-600" />
+              </button>
+            </div>
+            
+            <div className="p-0">
+              <button
+                onClick={handlePickInBulk}
+                className="w-full p-4 text-left hover:bg-gray-50 border-b border-gray-100"
+              >
+                Pick in Bulk
+              </button>
+              <button
+                onClick={handleMarkDamaged}
+                className="w-full p-4 text-left hover:bg-gray-50 border-b border-gray-100"
+              >
+                Mark Damaged
+              </button>
+              <button
+                onClick={handleMarkNotFound}
+                className="w-full p-4 text-left hover:bg-gray-50 border-b border-gray-100"
+              >
+                Mark Not Found
+              </button>
+              <button
+                onClick={handleShortPick}
+                className="w-full p-4 text-left hover:bg-gray-50"
+              >
+                Short Pick
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Bulk Pick Modal */}
       {showBulkPickModal && selectedProduct && (
