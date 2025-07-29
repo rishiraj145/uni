@@ -63,6 +63,11 @@ This is a mobile-first picking application migrated from Figma to Replit. The ap
 - **2025-01-29**: Added interactive scan button with scanning animation and feedback
 - **2025-01-29**: Fixed product card spacing with consistent 12px gaps between items
 - **2025-01-29**: Enhanced camera error handling and user feedback for permissions
+- **2025-01-29**: Implemented bulk picking interface matching provided screenshot with quantity selection
+- **2025-01-29**: Removed "Pick One" button - clicking cards now picks items one by one directly
+- **2025-01-29**: Added comprehensive product details in bulk pick modal (batch, dates, costs)
+- **2025-01-29**: Enhanced alert system with confirmation dialog for completed shelf picking
+- **2025-01-29**: Implemented automatic navigation back to shelf detail after completing all items
 
 ## User Preferences
 - Mobile-first design approach

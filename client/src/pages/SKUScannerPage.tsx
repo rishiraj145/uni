@@ -71,9 +71,11 @@ export function SKUScannerPage() {
   const [, navigate] = useLocation();
   const [activeTab, setActiveTab] = useState<"pending" | "scanned">("pending");
   const [products, setProducts] = useState<Product[]>(initialProducts);
-  const [showActionsModal, setShowActionsModal] = useState(false);
+  const [showBulkPickModal, setShowBulkPickModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [showShelfEmptyAlert, setShowShelfEmptyAlert] = useState(false);
+  const [bulkQuantity, setBulkQuantity] = useState(1);
+  const [inventoryType, setInventoryType] = useState("Good");
   const videoRef = useRef<HTMLVideoElement>(null);
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
   const [cameraError, setCameraError] = useState<string>("");
@@ -140,10 +142,25 @@ export function SKUScannerPage() {
 
   const handleProductClick = (product: Product) => {
     if (activeTab === "pending" && product.pickedQuantity < product.totalQuantity && !product.isPicking) {
-      setSelectedProduct(product);
-      setProducts(prev => prev.map(p => 
-        p.id === product.id ? { ...p, isPicking: true } : p
-      ));
+      // Pick one item directly when clicking the card
+      setProducts(prev => prev.map(p => {
+        if (p.id === product.id) {
+          const newPickedQuantity = Math.min(p.pickedQuantity + 1, p.totalQuantity);
+          return { ...p, pickedQuantity: newPickedQuantity };
+        }
+        return p;
+      }));
+      
+      // Check if all items are now picked
+      const updatedProducts = products.map(p => 
+        p.id === product.id 
+          ? { ...p, pickedQuantity: Math.min(p.pickedQuantity + 1, p.totalQuantity) }
+          : p
+      );
+      const allPicked = updatedProducts.every(p => p.pickedQuantity === p.totalQuantity);
+      if (allPicked) {
+        setTimeout(() => setShowShelfEmptyAlert(true), 500);
+      }
     } else if (activeTab === "scanned" && product.pickedQuantity > 0) {
       // Move item back to pending by reducing picked quantity by 1
       setProducts(prev => prev.map(p => {
@@ -163,62 +180,46 @@ export function SKUScannerPage() {
   const handleQuantityClick = (product: Product) => {
     if (product.isPicking) {
       setSelectedProduct(product);
-      setShowActionsModal(true);
+      setBulkQuantity(1);
+      setInventoryType("Good");
+      setShowBulkPickModal(true);
     }
   };
 
-  const pickOne = (productId: string) => {
+
+
+  const handleBulkPickSubmit = () => {
+    if (!selectedProduct) return;
+    
     setProducts(prev => prev.map(p => {
-      if (p.id === productId) {
-        const newPickedQuantity = Math.min(p.pickedQuantity + 1, p.totalQuantity);
+      if (p.id === selectedProduct.id) {
+        const newPickedQuantity = Math.min(p.pickedQuantity + bulkQuantity, p.totalQuantity);
         return { 
           ...p, 
           pickedQuantity: newPickedQuantity,
-          isPicking: newPickedQuantity < p.totalQuantity
-        };
-      }
-      return p;
-    }));
-    
-    checkIfShelfEmpty();
-  };
-
-  const pickInBulk = (productId: string) => {
-    setProducts(prev => prev.map(p => {
-      if (p.id === productId) {
-        return { 
-          ...p, 
-          pickedQuantity: p.totalQuantity,
           isPicking: false
         };
       }
       return p;
     }));
     
-    setShowActionsModal(false);
-    checkIfShelfEmpty();
+    setShowBulkPickModal(false);
+    
+    // Check if all items are now picked
+    const updatedProducts = products.map(p => 
+      p.id === selectedProduct.id 
+        ? { ...p, pickedQuantity: Math.min(p.pickedQuantity + bulkQuantity, p.totalQuantity) }
+        : p
+    );
+    const allPicked = updatedProducts.every(p => p.pickedQuantity === p.totalQuantity);
+    if (allPicked) {
+      setTimeout(() => setShowShelfEmptyAlert(true), 500);
+    }
   };
 
-  const markDamaged = (productId: string) => {
-    setProducts(prev => prev.map(p => 
-      p.id === productId ? { ...p, status: "DAMAGED" as const, isPicking: false } : p
-    ));
-    setShowActionsModal(false);
-  };
-
-  const markNotFound = (productId: string) => {
-    setProducts(prev => prev.map(p => 
-      p.id === productId ? { ...p, isPicking: false } : p
-    ));
-    setShowActionsModal(false);
-  };
-
-  const shortPick = (productId: string) => {
-    // For now, just stop picking - could implement partial pick logic
-    setProducts(prev => prev.map(p => 
-      p.id === productId ? { ...p, isPicking: false } : p
-    ));
-    setShowActionsModal(false);
+  const handleShelfEmptyConfirm = () => {
+    setShowShelfEmptyAlert(false);
+    navigate("/shelf-detail/1");
   };
 
   const checkIfShelfEmpty = () => {
@@ -235,10 +236,10 @@ export function SKUScannerPage() {
   };
 
   const getShoeColor = (title: string) => {
-    if (title.includes('Red')) return { start: '#dc2626', end: '#b91c1c' };
-    if (title.includes('Blue')) return { start: '#2563eb', end: '#1d4ed8' };
-    if (title.includes('Yellow')) return { start: '#eab308', end: '#ca8a04' };
-    return { start: '#1f2937', end: '#111827' };
+    if (title.includes('Red')) return { start: '#dc2626', end: '#b91c1c', bg: '#fef2f2', accent: '#dc2626' };
+    if (title.includes('Blue')) return { start: '#2563eb', end: '#1d4ed8', bg: '#eff6ff', accent: '#2563eb' };
+    if (title.includes('Yellow')) return { start: '#eab308', end: '#ca8a04', bg: '#fefce8', accent: '#eab308' };
+    return { start: '#1f2937', end: '#111827', bg: '#f9fafb', accent: '#1f2937' };
   };
 
   const ProductCard = ({ product }: { product: Product }) => {
@@ -466,44 +467,108 @@ export function SKUScannerPage() {
         )}
       </div>
 
-      {/* Actions Modal */}
-      {showActionsModal && selectedProduct && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-end z-50">
-          <div className="bg-white w-full rounded-t-lg animate-slide-up">
+      {/* Bulk Pick Modal */}
+      {showBulkPickModal && selectedProduct && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg w-full max-w-md">
             <div className="flex justify-between items-center p-4 border-b border-gray-200">
-              <h3 className="text-lg font-semibold">ACTIONS</h3>
+              <h3 className="text-lg font-semibold">PICK IN BULK</h3>
               <button 
-                onClick={() => setShowActionsModal(false)}
+                onClick={() => setShowBulkPickModal(false)}
                 className="p-1"
               >
                 <X className="w-5 h-5 text-gray-600" />
               </button>
             </div>
             
-            <div className="p-0">
+            <div className="p-4">
+              {/* Product Info */}
+              <div className="mb-4">
+                <h4 className="font-medium text-gray-900 mb-1">{selectedProduct.title}</h4>
+                <p className="text-sm text-gray-600">{selectedProduct.sku}</p>
+              </div>
+
+              {/* Product Image */}
+              <div className="bg-gray-100 rounded-lg p-8 mb-4 flex items-center justify-center">
+                <div className="w-32 h-32">
+                  <img 
+                    src={`data:image/svg+xml;base64,${btoa(`
+                      <svg width="128" height="128" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="128" height="128" fill="${getShoeColor(selectedProduct.title).bg}"/>
+                        <path d="M20 80 Q30 70 50 75 Q70 80 90 75 Q100 70 108 80 L108 95 Q100 100 90 95 Q70 100 50 95 Q30 100 20 95 Z" fill="${getShoeColor(selectedProduct.title).accent}"/>
+                        <path d="M25 85 Q35 75 55 80 Q75 85 95 80 Q105 75 108 85" stroke="white" stroke-width="2" fill="none"/>
+                        <circle cx="95" cy="82" r="3" fill="white"/>
+                      </svg>
+                    `)}`}
+                    alt="Nike Shoe"
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+              </div>
+
+              {/* Quantity and Inventory Type */}
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label className="block text-sm text-gray-600 mb-1">* Quantity</label>
+                  <div className="flex items-center border border-gray-300 rounded">
+                    <input
+                      type="number"
+                      value={bulkQuantity}
+                      onChange={(e) => setBulkQuantity(Math.max(1, Math.min(parseInt(e.target.value) || 1, selectedProduct.totalQuantity - selectedProduct.pickedQuantity)))}
+                      className="flex-1 px-3 py-2 text-center border-none outline-none"
+                      min="1"
+                      max={selectedProduct.totalQuantity - selectedProduct.pickedQuantity}
+                    />
+                    <span className="px-2 text-gray-500">/{selectedProduct.totalQuantity - selectedProduct.pickedQuantity}</span>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-600 mb-1">* Inventory Type</label>
+                  <select
+                    value={inventoryType}
+                    onChange={(e) => setInventoryType(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded bg-white"
+                  >
+                    <option value="Good">Good</option>
+                    <option value="Damaged">Damaged</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Product Details */}
+              <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm mb-6">
+                <div>
+                  <span className="text-gray-600">Batch</span>
+                  <div className="font-medium">B1001234355</div>
+                </div>
+                <div>
+                  <span className="text-gray-600">MRP</span>
+                  <div className="font-medium">₹{selectedProduct.mrp.toLocaleString()}</div>
+                </div>
+                <div>
+                  <span className="text-gray-600">Mfg. Date</span>
+                  <div className="font-medium">{selectedProduct.mfgDate}</div>
+                </div>
+                <div>
+                  <span className="text-gray-600">Expiry Date</span>
+                  <div className="font-medium">02/05/2035</div>
+                </div>
+                <div>
+                  <span className="text-gray-600">Cost</span>
+                  <div className="font-medium">₹6,000</div>
+                </div>
+                <div>
+                  <span className="text-gray-600">MRP</span>
+                  <div className="font-medium">₹10,000</div>
+                </div>
+              </div>
+
+              {/* Submit Button */}
               <button
-                onClick={() => pickInBulk(selectedProduct.id)}
-                className="w-full p-4 text-left hover:bg-gray-50 border-b border-gray-100"
+                onClick={handleBulkPickSubmit}
+                className="w-full bg-blue-600 text-white py-3 rounded font-medium hover:bg-blue-700"
               >
-                Pick in Bulk
-              </button>
-              <button
-                onClick={() => markDamaged(selectedProduct.id)}
-                className="w-full p-4 text-left hover:bg-gray-50 border-b border-gray-100"
-              >
-                Mark Damaged
-              </button>
-              <button
-                onClick={() => markNotFound(selectedProduct.id)}
-                className="w-full p-4 text-left hover:bg-gray-50 border-b border-gray-100"
-              >
-                Mark Not Found
-              </button>
-              <button
-                onClick={() => shortPick(selectedProduct.id)}
-                className="w-full p-4 text-left hover:bg-gray-50"
-              >
-                Short Pick
+                SUBMIT
               </button>
             </div>
           </div>
@@ -514,24 +579,20 @@ export function SKUScannerPage() {
       {showShelfEmptyAlert && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 m-4 text-center">
-            <div className="text-green-600 text-4xl mb-2">✓</div>
-            <h3 className="text-lg font-semibold mb-2">Shelf Emptied!</h3>
-            <p className="text-gray-600">All items have been picked from this shelf.</p>
+            <div className="text-green-600 text-4xl mb-4">✓</div>
+            <h3 className="text-lg font-semibold mb-2">All items scanned!</h3>
+            <p className="text-gray-600 mb-4">All items from this shelf have been picked successfully.</p>
+            <button
+              onClick={handleShelfEmptyConfirm}
+              className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
+            >
+              OK
+            </button>
           </div>
         </div>
       )}
 
-      {/* Auto-click functionality for single item pick */}
-      {selectedProduct && selectedProduct.isPicking && !showActionsModal && (
-        <div className="fixed bottom-4 right-4">
-          <button
-            onClick={() => pickOne(selectedProduct.id)}
-            className="bg-green-600 text-white p-3 rounded-full shadow-lg hover:bg-green-700"
-          >
-            Pick One
-          </button>
-        </div>
-      )}
+
     </div>
   );
 }
