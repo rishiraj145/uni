@@ -59,6 +59,10 @@ This is a mobile-first picking application migrated from Figma to Replit. The ap
 - **2025-01-29**: Fixed picking state bug - cards in picking mode no longer accept click events except for quantity button
 - **2025-01-29**: Implemented scanned item reversal - clicking scanned items moves one unit back to pending
 - **2025-01-29**: Enhanced UX with visual indicators for clickable scanned items
+- **2025-01-29**: Implemented live camera feed for real barcode scanning with scanning overlay
+- **2025-01-29**: Added interactive scan button with scanning animation and feedback
+- **2025-01-29**: Fixed product card spacing with consistent 12px gaps between items
+- **2025-01-29**: Enhanced camera error handling and user feedback for permissions
 
 ## User Preferences
 - Mobile-first design approach

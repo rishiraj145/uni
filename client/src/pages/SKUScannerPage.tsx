@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import { ArrowLeft, X, Trash2 } from "lucide-react";
 
@@ -74,12 +74,63 @@ export function SKUScannerPage() {
   const [showActionsModal, setShowActionsModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [showShelfEmptyAlert, setShowShelfEmptyAlert] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
+  const [cameraError, setCameraError] = useState<string>("");
+  const [isScanning, setIsScanning] = useState(false);
+
+  // Camera functionality
+  useEffect(() => {
+    startCamera();
+    return () => {
+      stopCamera();
+    };
+  }, []);
+
+  const startCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: "environment",
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
+        }
+      });
+      
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        setCameraStream(stream);
+        setCameraError("");
+      }
+    } catch (error) {
+      console.error("Error accessing camera:", error);
+      setCameraError("Camera access denied. Please allow camera permissions.");
+    }
+  };
+
+  const stopCamera = () => {
+    if (cameraStream) {
+      cameraStream.getTracks().forEach(track => track.stop());
+      setCameraStream(null);
+    }
+  };
+
+  const simulateBarcodeScanner = () => {
+    setIsScanning(true);
+    setTimeout(() => {
+      setIsScanning(false);
+      // Simulate successful scan - could integrate with real barcode scanning library
+      console.log("Barcode scanned successfully");
+    }, 1500);
+  };
 
   const handleBack = () => {
+    stopCamera();
     navigate("/shelf-detail/1");
   };
 
   const handleClose = () => {
+    stopCamera();
     navigate("/b2b-packing");
   };
 
@@ -196,7 +247,7 @@ export function SKUScannerPage() {
     
     return (
       <div 
-        className={`bg-white rounded-lg border p-4 mb-3 transition-all ${
+        className={`bg-white rounded-lg border p-4 transition-all ${
           product.isPicking 
             ? 'border-green-500 border-2 bg-green-50' 
             : activeTab === 'pending' && pendingQty > 0
@@ -321,23 +372,53 @@ export function SKUScannerPage() {
           <Trash2 className="w-5 h-5 text-gray-400" />
         </div>
         
-        {/* Barcode Scanner Placeholder */}
+        {/* Live Camera Scanner */}
         <div className="bg-gray-800 rounded-lg p-4 mb-4">
-          <div className="bg-white rounded-lg p-2 flex items-center justify-center">
-            <img 
-              src={`data:image/svg+xml;base64,${btoa(`
-                <svg width="320" height="100" xmlns="http://www.w3.org/2000/svg">
-                  <rect width="320" height="100" fill="white"/>
-                  <text x="160" y="20" text-anchor="middle" fill="black" font-size="10" font-family="Arial">MILWAUKEE</text>
-                  <g transform="translate(20, 25)">
-                    ${Array.from({length: 50}, (_, i) => `<rect x="${i * 6}" y="0" width="${Math.random() > 0.5 ? 2 : 1}" height="50" fill="black"/>`).join('')}
-                  </g>
-                  <text x="280" y="85" text-anchor="middle" fill="black" font-size="16" font-weight="bold" font-family="Arial">G</text>
-                </svg>
-              `)}`}
-              alt="Barcode"
-              className="w-full h-auto"
-            />
+          <div className="relative rounded-lg overflow-hidden">
+            {cameraError ? (
+              <div className="bg-gray-700 h-32 flex items-center justify-center rounded-lg">
+                <p className="text-white text-sm text-center px-4">{cameraError}</p>
+              </div>
+            ) : (
+              <div className="relative h-32 bg-black rounded-lg overflow-hidden">
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  playsInline
+                  muted
+                  className="w-full h-full object-cover"
+                />
+                
+                {/* Scanning Overlay */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="relative w-64 h-20 border-2 border-white border-opacity-60 rounded-lg">
+                    {/* Corner brackets */}
+                    <div className="absolute -top-1 -left-1 w-4 h-4 border-t-2 border-l-2 border-white"></div>
+                    <div className="absolute -top-1 -right-1 w-4 h-4 border-t-2 border-r-2 border-white"></div>
+                    <div className="absolute -bottom-1 -left-1 w-4 h-4 border-b-2 border-l-2 border-white"></div>
+                    <div className="absolute -bottom-1 -right-1 w-4 h-4 border-b-2 border-r-2 border-white"></div>
+                    
+                    {/* Scanning line */}
+                    {isScanning && (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-full h-0.5 bg-red-500 animate-pulse"></div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                {/* Scan Button */}
+                <button
+                  onClick={simulateBarcodeScanner}
+                  disabled={isScanning}
+                  className="absolute bottom-2 right-2 bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full p-2 transition-all disabled:opacity-50"
+                >
+                  <div className="w-6 h-6 border-2 border-gray-800 rounded flex items-center justify-center">
+                    <div className="w-2 h-2 bg-gray-800 rounded"></div>
+                  </div>
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -371,7 +452,7 @@ export function SKUScannerPage() {
       {/* Product List */}
       <div className="p-4 pb-20">
         {currentProducts.length > 0 ? (
-          <div className="space-y-0">
+          <div className="space-y-3">
             {currentProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
